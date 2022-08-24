@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, Touchable, TouchableWithoutFeedback, View, Keyboard} from 'react-native';
 import LoginForm from '../forms/login_form';
 import CustomButton from '../styles/customButton';
 import { globalStyles } from '../styles/globalStyle';
@@ -8,23 +8,32 @@ import { globalStyles } from '../styles/globalStyle';
 const Login = ()=>{
 
     return(
-        <View style = {[globalStyles.container, styles.loginContainer]}>
-            <View>
-                <Text style = {{fontFamily : 'Inter-Bold', fontSize : 40, color : '#fff'}}>
-                    {/* TODO: to be replaced by LOGO- Change Style to Image */}
-                    PangasiMAN
-                </Text>
-                <Text style = {styles.h_text}> The Man for the Job</Text>
+        <TouchableWithoutFeedback onPress={
+            //Disable Keyboard when Click outside Form
+            ()=>(Keyboard.dismiss())
+        }>
+            <View style = {[globalStyles.container, styles.loginContainer]}>
+                <View>
+                    <Text style = {{fontFamily : 'Inter-Bold', fontSize : 40, color : '#fff'}}>
+                        {/* TODO: to be replaced by LOGO- Change Style to Image */}
+                        PangasiMAN
+                    </Text>
+                    <Text style = {styles.h_text}> The Man for the Job</Text>
+                </View>
+                <View style={styles.formContainer}>
+                    {/* TODO : Forms Login  */}
+                    <LoginForm/>
+
+                    <Text style ={{alignSelf : 'center', color : '#fff', fontFamily : 'Inter-Bold', fontSize : 13,}}> or 
+                    </Text>
+
+                    <CustomButton onPress={() => {}} title='Sign Up' styleButton={styles.signButton} styleText={styles.signText}/>
+
+                    <CustomButton onPress={()=>{}} title={'Forgot Password?'} styleButton={undefined} styleText={{color: '#fff',textTransform:'capitalize'}} />
+                    
+                </View>
             </View>
-            <View style={styles.formContainer}>
-                {/* TODO : Forms Login  */}
-                <LoginForm/>
-                <Text style ={{alignSelf : 'center', color : '#fff', fontFamily : 'Inter-Bold', fontSize : 13,}}> or 
-                </Text>
-                <CustomButton onPress={() => {}} title='Sign Up' styleButton={styles.signButton} styleText={styles.signText}/>
-                <CustomButton onPress={()=>{}} title={'Forgot Password?'} styleButton={undefined} styleText={{color: '#fff',textTransform:'capitalize'}} />
-            </View>
-        </View>
+        </TouchableWithoutFeedback>
     );
 }
 
