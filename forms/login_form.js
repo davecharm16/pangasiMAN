@@ -40,9 +40,10 @@ export default function LoginForm () {
                     style = {[styles.formInput, globalStyles.dropShadow]}
                     onChangeText= {props.handleChange('email')}
                     value = {props.values.email}
+                    onBlur = {props.handleBlur('email')}
                     keyboardType="email-address"
                     />
-                    {props.errors.email &&
+                    {props.errors.email && props.touched.email &&
                         <Text style={{ fontSize: 10, color: 'red' }}>{props.errors.email}</Text>
                     }
                     <TextInput placeholder='Password' placeholderTextColor={'#189AB4'}
@@ -50,11 +51,14 @@ export default function LoginForm () {
                     style = {[styles.formInput, globalStyles.dropShadow]}
                     onChangeText= {props.handleChange('password')}
                     value = {props.values.password}
+                    onBlur = {props.handleBlur('password')}
                     />
-                    {props.errors.password &&
-                        <Text style={{ fontSize: 10, color: 'red' }}>{props.errors.password}</Text>
+
+                    {props.errors.password && props.touched.password &&
+                        <Text style={{ fontSize: 10, color: 'red' }}>{ props.errors.password}</Text>
                     }
-                    <CustomButton title={'LOGIN'} onPress={props.handleSubmit} styleButton={styles.loginButton} styleText={styles.textButton} />
+                    <CustomButton title={'LOGIN'} onPress={props.handleSubmit} styleButton={styles.loginButton} styleText={styles.textButton} 
+                    />
                 </View>
             )
             }    
