@@ -9,6 +9,8 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-navigation/native": "^6.0.12",
+    "@react-navigation/native-stack": "^6.8.0",
     "expo": "~46.0.8",
     "expo-font": "~10.2.0",
     "expo-splash-screen": "~0.16.1",
@@ -16,6 +18,8 @@
     "formik": "^2.2.9",
     "react": "18.0.0",
     "react-native": "0.69.4",
+    "react-native-safe-area-context": "4.3.1",
+    "react-native-screens": "~3.15.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {
