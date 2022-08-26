@@ -37,7 +37,7 @@ export default function App() {
 	  {/* <View style={styles.container}> */}
 		<Navigation/>
 	  {/* </View> */}
-	  {/* <StatusBar/> */}
+	  {/* <StatusBar style = "auto"/> */}
 	</SafeAreaView>
   );
 }
