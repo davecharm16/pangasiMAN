@@ -5,7 +5,12 @@ import CustomButton from '../styles/customButton';
 import { globalStyles } from '../styles/globalStyle';
 
 
-const Login = ()=>{
+const Login = ({ navigation })=>{
+
+
+    function onPressSignUp() {
+        navigation.navigate('Signup');
+    }
 
     return(
         <TouchableWithoutFeedback onPress={
@@ -22,12 +27,16 @@ const Login = ()=>{
                 </View>
                 <View style={styles.formContainer}>
                     {/* TODO : Forms Login  */}
-                    <LoginForm/>
+                    <LoginForm navigation={navigation}/>
 
                     <Text style ={{alignSelf : 'center', color : '#fff', fontFamily : 'Inter-Bold', fontSize : 13,}}> or 
                     </Text>
 
-                    <CustomButton onPress={() => {}} title='Sign Up' styleButton={styles.signButton} styleText={styles.signText}/>
+                    <CustomButton 
+                    onPress={() => {
+                        onPressSignUp()
+                    }} 
+                    title='Sign Up' styleButton={styles.signButton} styleText={styles.signText}/>
 
                     <CustomButton onPress={()=>{}} title={'Forgot Password?'} styleButton={undefined} styleText={{color: '#fff',textTransform:'capitalize'}} />
                     
