@@ -1,4 +1,4 @@
-// import 'react-native-gesture-handler';
+import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import React,  { useEffect, useCallback } from 'react';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
@@ -6,6 +6,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import Login from './screens/login';
 import Navigation from './routes/authStack';
+import DrawerStack from './routes/drawerStack';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -36,6 +37,7 @@ export default function App() {
 	<SafeAreaView style ={{flex: 1}} onLayout={onLayoutRootView}>
 	  {/* <View style={styles.container}> */}
 		<Navigation/>
+		{/* <DrawerStack/> */}
 	  {/* </View> */}
 	  {/* <StatusBar style = "auto"/> */}
 	</SafeAreaView>

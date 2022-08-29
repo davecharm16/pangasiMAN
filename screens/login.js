@@ -6,9 +6,12 @@ import { globalStyles } from '../styles/globalStyle';
 
 
 const Login = ({ navigation })=>{
+
+
     function onPressSignUp() {
         navigation.navigate('Signup');
     }
+
     return(
         <TouchableWithoutFeedback onPress={
             //Disable Keyboard when Click outside Form
@@ -24,7 +27,7 @@ const Login = ({ navigation })=>{
                 </View>
                 <View style={styles.formContainer}>
                     {/* TODO : Forms Login  */}
-                    <LoginForm/>
+                    <LoginForm navigation={navigation}/>
 
                     <Text style ={{alignSelf : 'center', color : '#fff', fontFamily : 'Inter-Bold', fontSize : 13,}}> or 
                     </Text>

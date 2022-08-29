@@ -17,8 +17,7 @@ const loginValidationSchema = yup.object().shape({
     .required('Password is required'),
 })
 
-export default function LoginForm () {
-
+export default function LoginForm ({ navigation }) {
 
     return(
         <View>
@@ -29,6 +28,7 @@ export default function LoginForm () {
 
                 // HANDLES THE SUBMIT BUTTON ON LOGIN
                 onSubmit = { (values,actions) => {
+                    navigation.navigate('Home');
                     console.log(values)
                     actions.resetForm()
                 }}
