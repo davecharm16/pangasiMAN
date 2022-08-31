@@ -1,18 +1,20 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import React,  { useEffect, useCallback } from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import {StyleSheet} from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import Login from './screens/login';
 import Navigation from './routes/authStack';
-import DrawerStack from './routes/drawerStack';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
 	'Inter-Bold': require('./assets/fonts/Inter-Bold.ttf'),
 	'Inter-Light': require('./assets/fonts/Inter-Light.ttf'),
 	'Inter-Regular': require('./assets/fonts/Inter-Regular.ttf'),
+	'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
+	'Mont-Regular': require('./assets/fonts/Montserrat-Regular.ttf'),
+	'Mont-Bold': require('./assets/fonts/Montserrat-Bold.ttf'),
   });
 
   useEffect(() => {
@@ -35,11 +37,11 @@ export default function App() {
   
   return (
 	<SafeAreaView style ={{flex: 1}} onLayout={onLayoutRootView}>
-	  {/* <View style={styles.container}> */}
+	{/* <View style={styles.container}> */}
 		<Navigation/>
 		{/* <DrawerStack/> */}
-	  {/* </View> */}
-	  {/* <StatusBar style = "auto"/> */}
+	{/* </View> */}
+	{/* <StatusBar style = "auto"/> */}
 	</SafeAreaView>
   );
 }
