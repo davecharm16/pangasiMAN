@@ -28,9 +28,10 @@ export default function LoginForm ({ navigation }) {
 
                 // HANDLES THE SUBMIT BUTTON ON LOGIN
                 onSubmit = { (values,actions) => {
+                    actions.resetForm();
+                    
                     navigation.navigate('Home');
                     console.log(values)
-                    actions.resetForm()
                 }}
             >
             {(props)=>(
