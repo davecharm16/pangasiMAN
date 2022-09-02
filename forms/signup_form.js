@@ -68,6 +68,8 @@ const signInValidationSchema = yup.object().shape({
 
 const SignUpForm =()=>{
 
+    
+
     return (
         <View>
             <View style = {styles.header}>

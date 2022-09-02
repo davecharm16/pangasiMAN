@@ -4,6 +4,8 @@ import { globalStyles } from '../styles/globalStyle';
 import { Formik } from 'formik';
 import CustomButton from '../styles/customButton';
 import * as yup from 'yup';
+import Login from '../screens/login';
+import axios from 'axios';
 
 // VALIDATION SCHEMA FROM YUP
 const loginValidationSchema = yup.object().shape({
@@ -17,7 +19,13 @@ const loginValidationSchema = yup.object().shape({
     .required('Password is required'),
 })
 
+const logURL  = 'http://localhost/'
+
 export default function LoginForm ({ navigation }) {
+
+    const logIn = (values)=>{
+        axios.post()
+    }
 
     return(
         <View>
@@ -29,9 +37,8 @@ export default function LoginForm ({ navigation }) {
                 // HANDLES THE SUBMIT BUTTON ON LOGIN
                 onSubmit = { (values,actions) => {
                     actions.resetForm();
-                    
-                    navigation.navigate('Home');
-                    console.log(values)
+                    logIn(values)
+                    // navigation.navigate('Home');
                 }}
             >
             {(props)=>(
