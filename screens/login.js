@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, Touchable, TouchableWithoutFeedback, View, Keyboard} from 'react-native';
 import LoginForm from '../forms/login_form';
 import CustomButton from '../styles/customButton';

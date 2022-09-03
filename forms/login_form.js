@@ -1,11 +1,11 @@
 import React from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import {StyleSheet, Text, TextInput, View, Alert} from 'react-native';
 import { globalStyles } from '../styles/globalStyle';
 import { Formik } from 'formik';
 import CustomButton from '../styles/customButton';
 import * as yup from 'yup';
-import Login from '../screens/login';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // VALIDATION SCHEMA FROM YUP
 const loginValidationSchema = yup.object().shape({
@@ -19,12 +19,40 @@ const loginValidationSchema = yup.object().shape({
     .required('Password is required'),
 })
 
-const logURL  = 'http://localhost/'
+//Change this on deployment to host
+const logURL  = "http://10.0.2.2:80/pangasimanAPI/rest/api/log_user.php";
 
 export default function LoginForm ({ navigation }) {
 
-    const logIn = (values)=>{
-        axios.post()
+    const _setLogIn = async ()=>{
+        try {
+            await AsyncStorage.setItem(
+              'loggedIn',
+              'true'
+            );
+        } 
+        catch (error) {
+            // Error saving data
+            console.log("Error saving data login : "+error);
+        }
+    }
+
+    const logIn = async (values) => {
+        await axios.post(logURL, {
+            'email' : values.email,
+            'password' : values.password,
+        })
+        .then((response) => {
+            if(response.data.message == "Success"){
+                console.log(response.data.user)
+            }
+            else{
+                Alert.alert("Incorrect Password or Email");
+            }
+        })
+        .catch((error)=>{
+            console.log(error);
+        });
     }
 
     return(
