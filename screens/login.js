@@ -5,7 +5,7 @@ import CustomButton from '../styles/customButton';
 import { globalStyles } from '../styles/globalStyle';
 
 
-const Login = ({ navigation })=>{
+const Login = ({ navigation, onLog })=>{
 
 
     function onPressSignUp() {
@@ -27,7 +27,7 @@ const Login = ({ navigation })=>{
                 </View>
                 <View style={styles.formContainer}>
                     {/* TODO : Forms Login  */}
-                    <LoginForm navigation={navigation}/>
+                    <LoginForm navigation={navigation} onLog = {onLog} />
 
                     <Text style ={{alignSelf : 'center', color : '#fff', fontFamily : 'Inter-Bold', fontSize : 13,}}> or 
                     </Text>
