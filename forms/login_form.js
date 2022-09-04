@@ -6,6 +6,7 @@ import CustomButton from '../styles/customButton';
 import * as yup from 'yup';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { _setUser } from '../storage_async/async_function';
 
 // VALIDATION SCHEMA FROM YUP
 const loginValidationSchema = yup.object().shape({
@@ -22,7 +23,7 @@ const loginValidationSchema = yup.object().shape({
 //Change this on deployment to host
 const logURL  = "http://10.0.2.2:80/pangasimanAPI/rest/api/log_user.php";
 
-export default function LoginForm ({ navigation }) {
+export default function LoginForm ({ navigation, onLog }) {
 
     const _setLogIn = async ()=>{
         try {
@@ -37,6 +38,7 @@ export default function LoginForm ({ navigation }) {
         }
     }
 
+    //login function
     const logIn = async (values) => {
         await axios.post(logURL, {
             'email' : values.email,
@@ -44,7 +46,11 @@ export default function LoginForm ({ navigation }) {
         })
         .then((response) => {
             if(response.data.message == "Success"){
-                console.log(response.data.user)
+                console.log(response.data.user);
+                _setLogIn();
+                onLog(true);
+                _setUser(JSON.stringify(response.data.user));
+                // navigation.navigate('Home');
             }
             else{
                 Alert.alert("Incorrect Password or Email");
@@ -65,8 +71,7 @@ export default function LoginForm ({ navigation }) {
                 // HANDLES THE SUBMIT BUTTON ON LOGIN
                 onSubmit = { (values,actions) => {
                     actions.resetForm();
-                    logIn(values)
-                    // navigation.navigate('Home');
+                    logIn(values);
                 }}
             >
             {(props)=>(

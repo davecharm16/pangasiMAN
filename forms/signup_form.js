@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { globalStyles } from '../styles/globalStyle';
 import { Formik } from 'formik';
 import CustomButton from '../styles/customButton';
 import * as yup from 'yup';
 import moment from 'moment';
+import axios from 'axios'
+// import { create } from 'yup/lib/Reference';
 // import DatePicker from 'react-native-date-picker'
 // import DateTimePicker from '@react-native-community/datetimepicker';
 // import CustomDatePicker from '../styles/customDatePicker';
@@ -30,12 +32,12 @@ const signInValidationSchema = yup.object().shape({
     birthday: yup
     .string()
     .required('Birthday is required')
-    .test('is-valid-date','Use mm/dd/yy format',(val)=>{
-        return moment(val, "MM/DD/YY", true).isValid()
+    .test('is-valid-date','Use mm/dd/yyyy format',(val)=>{
+        return moment(val, "MM/DD/YYYY", true).isValid()
     }),
-    barangay: yup
+    baranggay: yup
     .string()
-    .required('Barangay is Required'),
+    .required('Baranggay is Required'),
     municipality: yup
     .string()
     .required('Municipality is Required'),
@@ -66,9 +68,69 @@ const signInValidationSchema = yup.object().shape({
 })
 
 
-const SignUpForm =()=>{
+const SignUpForm =({navigation})=>{
 
-    
+    const createUserURL = "http://10.0.2.2:80/pangasimanAPI/rest/api/createuser.php";
+    const createAddressURL = "http://10.0.2.2:80/pangasimanAPI/rest/api/createaddress.php";
+
+    const createAddress = async (values, id) =>{
+        data = {
+            "house_no" : values.house_no,
+            "street" : values.street,
+            "baranggay" : values.baranggay,
+            "municipality" : values.municipality,
+            "province" : values.province,
+            "zipcode" : values.zipcode,
+            "userID" : id
+        };
+
+        await axios.post(createAddressURL,data)
+        .then((response)=>{
+            const resp_descp = response.data.description;
+            if(response.data.message =="Failed"){
+                // Alert.alert(response.data.description);
+                console.log(resp_descp);
+            }
+            else{
+            //pass the id to create Address
+                // Alert.alert(response.data.description);
+                console.log(resp_descp)
+            }
+        })
+        .catch((e)=>{
+            console.log("ERROR: "+ e);
+        })
+    }
+
+    const createUser = async (values) => {
+        data = {
+            "firstname": values.first_name,
+            "lastname": values.last_name,
+            "birthday": values.birthday,
+            "email": values.email,
+            "password": values.password,
+            "sex": values.sex,
+            "contact_no": values.contact_no,
+            "security_answer" : values.security_ans
+        };
+        // console.log(data);
+        await axios.post(createUserURL, data)
+        .then((response) =>{
+            const resp_descp = response.data.description;
+            if(response.data.message == "Failed"){
+                Alert.alert(resp_descp);
+            }
+            else{
+            //pass the id to create Address
+                console.log(response.data);
+                createAddress(values, response.data.userID);
+                Alert.alert(resp_descp);
+            }
+        })
+        .catch((e)=>{
+            console.log("Error: " + e);
+        })
+    }
 
     return (
         <View>
@@ -84,7 +146,7 @@ const SignUpForm =()=>{
                     validationSchema={signInValidationSchema}
                     initialValues={{
                         first_name : '', last_name : '', birthday : '',
-                        sex : '', house_no : '', street : '', barangay: '',
+                        sex : '', house_no : '', street : '', baranggay: '',
                         municipality : '', province :'', zipcode :'',
                         email:'', contact_no : '', password: '', confirm_password: '',
                         security_ans: ''
@@ -92,8 +154,10 @@ const SignUpForm =()=>{
 
                     // HANDLES THE SUBMIT BUTTON ON LOGIN
                     onSubmit = { (values,actions) => {
-                        console.log(values)
+                        // console.log(values)
+                        createUser(values);
                         actions.resetForm()
+                        navigation.navigate('Login');
                     }}
                 >
 
@@ -147,7 +211,7 @@ const SignUpForm =()=>{
                                     </View>
                                     <View style = {styles.formInputContainer}>
                                         <TextInput 
-                                            placeholder='Birthday mm/dd/yy' placeholderTextColor={'#189AB4'} 
+                                            placeholder='Birthday mm/dd/yyyy' placeholderTextColor={'#189AB4'} 
                                             style = {[styles.formInput, globalStyles.dropShadow]}
                                             onChangeText= {props.handleChange('birthday')}
                                             value = {props.values.birthday}
@@ -183,15 +247,15 @@ const SignUpForm =()=>{
                                 <View style = {styles.inputContainer}>
                                     <View style = {styles.formInputContainer}>
                                         <TextInput 
-                                            placeholder='Barangay' placeholderTextColor={'#189AB4'} 
+                                            placeholder='Baranggay' placeholderTextColor={'#189AB4'} 
                                             style = {[styles.formInput, globalStyles.dropShadow]}
-                                            onChangeText= {props.handleChange('barangay')}
-                                            value = {props.values.barangay}
-                                            onBlur = {props.handleBlur('barangay')}
+                                            onChangeText= {props.handleChange('baranggay')}
+                                            value = {props.values.baranggay}
+                                            onBlur = {props.handleBlur('baranggay')}
                                         />
                                         {
-                                            props.errors.barangay && props.touched.barangay &&
-                                            <Text style={{ fontSize: 10, color: 'red', paddingHorizontal:15 }}>{ props.errors.barangay}</Text>
+                                            props.errors.baranggay && props.touched.baranggay &&
+                                            <Text style={{ fontSize: 10, color: 'red', paddingHorizontal:15 }}>{ props.errors.baranggay}</Text>
                                         }
                                     </View>
                                     <View style = {styles.formInputContainer}>

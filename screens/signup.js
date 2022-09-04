@@ -5,9 +5,7 @@ import CustomButton from '../styles/customButton';
 import { globalStyles } from '../styles/globalStyle';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-const SignUp = ({navigation}) =>{
-
-
+const SignUp = (props) =>{
     return (
         <KeyboardAwareScrollView>
             <TouchableWithoutFeedback 
@@ -17,7 +15,7 @@ const SignUp = ({navigation}) =>{
             }>
                 <ScrollView>
                     <View style = {[globalStyles.container, styles.signupContainer]}>
-                        <SignUpForm/>
+                        <SignUpForm {...props}/>
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>

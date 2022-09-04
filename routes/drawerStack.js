@@ -8,6 +8,7 @@ import {
 import { StackActions } from '@react-navigation/native';
 import JobFeed from '../screens/jobfeed';
 import Profile from '../screens/profile';
+import { _setUser } from '../storage_async/async_function';
 
 // function Feed() {
 //   return (
@@ -33,9 +34,9 @@ function CustomDrawerContent(props) {
         label="Logout"
         onPress={() => {
           // do log out
-
-            const popAction = StackActions.pop(1);
-            props.navigation.dispatch(popAction);
+          //unsetting the user
+          _setUser('{}');
+          props.onLog(false);
         }}
       />
     </DrawerContentScrollView>
@@ -44,17 +45,21 @@ function CustomDrawerContent(props) {
 
 const Drawer = createDrawerNavigator();
 
-function MyDrawer() {
+function MyDrawer(props) {
+  const func = (value)=>{
+    props.onLog(value);
+  }
   return (
     <Drawer.Navigator
       useLegacyImplementation
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={(props) => <CustomDrawerContent {...props} onLog={func}/>}
       screenOptions ={{
         headerTintColor : '#fff',
         headerStyle: {
           backgroundColor: '#05445E',
         }
       }}
+      initialRouteName ="Jobs"
     >
       <Drawer.Screen name="Profile" component={Profile} options = {{
         headerTintColor : '#fff',
