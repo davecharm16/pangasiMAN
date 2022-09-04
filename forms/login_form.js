@@ -1,9 +1,11 @@
 import React from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import {StyleSheet, Text, TextInput, View, Alert} from 'react-native';
 import { globalStyles } from '../styles/globalStyle';
 import { Formik } from 'formik';
 import CustomButton from '../styles/customButton';
 import * as yup from 'yup';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // VALIDATION SCHEMA FROM YUP
 const loginValidationSchema = yup.object().shape({
@@ -17,7 +19,41 @@ const loginValidationSchema = yup.object().shape({
     .required('Password is required'),
 })
 
+//Change this on deployment to host
+const logURL  = "http://10.0.2.2:80/pangasimanAPI/rest/api/log_user.php";
+
 export default function LoginForm ({ navigation }) {
+
+    const _setLogIn = async ()=>{
+        try {
+            await AsyncStorage.setItem(
+              'loggedIn',
+              'true'
+            );
+        } 
+        catch (error) {
+            // Error saving data
+            console.log("Error saving data login : "+error);
+        }
+    }
+
+    const logIn = async (values) => {
+        await axios.post(logURL, {
+            'email' : values.email,
+            'password' : values.password,
+        })
+        .then((response) => {
+            if(response.data.message == "Success"){
+                console.log(response.data.user)
+            }
+            else{
+                Alert.alert("Incorrect Password or Email");
+            }
+        })
+        .catch((error)=>{
+            console.log(error);
+        });
+    }
 
     return(
         <View>
@@ -29,9 +65,8 @@ export default function LoginForm ({ navigation }) {
                 // HANDLES THE SUBMIT BUTTON ON LOGIN
                 onSubmit = { (values,actions) => {
                     actions.resetForm();
-                    
-                    navigation.navigate('Home');
-                    console.log(values)
+                    logIn(values)
+                    // navigation.navigate('Home');
                 }}
             >
             {(props)=>(
