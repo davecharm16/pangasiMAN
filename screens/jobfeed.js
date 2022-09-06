@@ -65,8 +65,9 @@ const JobFeed = ({navigation}) =>{
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 10,
+      paddingHorizontal: 15,
       paddingVertical: 10,
+      backgroundColor : '#ffffff'
     },
     text: {
       fontSize: 18,

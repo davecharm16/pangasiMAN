@@ -9,6 +9,7 @@ import { StackActions } from '@react-navigation/native';
 import JobFeed from '../screens/jobfeed';
 import Profile from '../screens/profile';
 import { _setUser } from '../storage_async/async_function';
+import CreateJob from '../screens/createjob';
 
 // function Feed() {
 //   return (
@@ -75,7 +76,15 @@ function MyDrawer(props) {
         }
       }}
       />
-      
+      <Drawer.Screen name="Create Job Offer" component={CreateJob} options = {{
+          headerTintColor : '#fff',
+          headerStyle: {
+            backgroundColor: '#05445E',
+          },
+          headerTitle: "Create Job",
+        }}
+      />
+      {/* Create create job offer Screen */}
       {/* <Drawer.Screen name="Article" component={Article} /> */}
     </Drawer.Navigator>
   );
