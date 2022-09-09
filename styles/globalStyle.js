@@ -40,5 +40,6 @@ export const globalStyles = StyleSheet.create({
     row : {
         flexDirection : 'row',
         paddingVertical : 2,
+        alignItems: 'center',
     }
 });

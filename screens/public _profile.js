@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import { Alert, BackHandler, Text, View, StyleSheet, Button,TouchableOpacity,ScrollView } from 'react-native';
+import { Alert,Text, View, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import { _getUser } from '../storage_async/async_function';
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,26 +9,27 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import { ScrollView} from 'react-native-gesture-handler';
 
 
-const Profile = (props)=>{
+const PublicProfile = ()=>{
 
-    const[user, setUser] = useState('');
+    // const[user, setUser] = useState('');
 
-    const getUser = async ()=>{
-        const userData = await _getUser();
-        if( userData !== null){
-            setUser(userData);
-        }
-        else{
-            console.log('no user')
-            setUser('');
-        }
-    }
+    // const getUser = async ()=>{
+    //     const userData = await _getUser();
+    //     if( userData !== null){
+    //         setUser(userData);
+    //     }
+    //     else{
+    //         console.log('no user')
+    //         setUser('');
+    //     }
+    // }
 
-    useEffect(() => {
-        getUser();
-    }, []);
+    // useEffect(() => {
+    //     getUser();
+    // }, []);
 
     return (
         <View style = {styles.container }>
@@ -40,11 +41,11 @@ const Profile = (props)=>{
 
                         </View>
                         <View style = {styles.textContainer}>
-                            <Text style = {styles.textName}>{user.firstname} {user.lastname}</Text>
+                            <Text style = {styles.textName}>Test Name</Text>
                             <View style = {globalStyles.row}>
                                 <FontAwesome5 name="user" size={18} color="#5B5B5B" />
                                 <Text style = {styles.regText}>
-                                    {user.age} years old, {user.sex}
+                                  18 years old,  Male
                                 </Text>  
                             </View>
                             <View style = {globalStyles.row}>
@@ -52,18 +53,6 @@ const Profile = (props)=>{
                                 <Text style = {styles.regText}>
                                     #452 Talospatang, Malasiqui, Pangasinan
                                 </Text>  
-                            </View>
-                            <View style = {styles.edit}>
-                                <TouchableOpacity 
-                                    onPress={
-                                        // navigation.navigate('PublicProfile')
-                                        ()=>{
-                                            console.log('EditPressed')
-                                        }
-                                    }
-                                >
-                                    <FontAwesome5 name="edit" size={24} color="#189AB4" />
-                                </TouchableOpacity>
                             </View>
                         </View>
                     </View>
@@ -78,13 +67,13 @@ const Profile = (props)=>{
                     <View style = {globalStyles.row}>
                         <AntDesign name="phone" size={18} color="#5B5B5B" />
                         <Text style = {styles.regText}>
-                            {user.contact_no}
+                            09151869987
                         </Text>  
                     </View>
                     <View style = {globalStyles.row}>
                         <MaterialCommunityIcons name="email-outline" size={18} color="#5B5B5B" />
                         <Text style = {styles.regText}>
-                            {user.email}
+                            dcbb@gmail.com
                         </Text>  
                     </View>
                 </View>
@@ -94,27 +83,16 @@ const Profile = (props)=>{
                 {/* hack */}
                 <Text style = {styles.text}>Skills</Text>
                 <View style = {[globalStyles.card, globalStyles.card_default]}>
-                    <View style = {styles.edit}>
-                        <TouchableOpacity>
-                            <FontAwesome5 name="plus" size={24} color="#189AB4" />
-                        </TouchableOpacity>
-                    </View>
                     <View style = {globalStyles.row}>
                         <View style={styles.skillContainer}>
                             <Text style = {styles.skillText}>
                                 Cooking
                             </Text>
-                            <TouchableOpacity>
-                                <Feather name="x-circle" size={18} color="white" />
-                            </TouchableOpacity>  
                         </View>
                         <View style={styles.skillContainer}>
                             <Text style = {styles.skillText}>
                                 Plumbing
                             </Text>  
-                            <TouchableOpacity>
-                                <Feather name="x-circle" size={18} color="white" />
-                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
@@ -122,9 +100,18 @@ const Profile = (props)=>{
                 {/* hack */}
                 <View style = {{height : 10}}></View>
                 {/* hack */}
-                <Text style = {styles.text}>Service Reviews</Text>
-
+                <View style = {{flexDirection :'row', justifyContent: 'space-between'}}>
+                        <Text style = {styles.text}>Service Reviews</Text>
+                        <TouchableOpacity
+                            onPress={ ()=>{
+                                console.log('Give Review');
+                            }}
+                        >
+                            <FontAwesome5 name="plus" size={24} color="#189AB4" />
+                        </TouchableOpacity>
+                    </View>
                 <View style={styles.reviewsContainer}>
+                    
                     <ScrollView>
                         <View style = {[globalStyles.card, globalStyles.card_default]}>
                             <Text style={styles.textName}>
@@ -265,4 +252,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default Profile;
+export default PublicProfile;

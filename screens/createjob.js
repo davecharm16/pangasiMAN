@@ -1,48 +1,156 @@
-import React from "react";
+import React , {useState, useEffect} from "react";
 import { View, Text, StyleSheet, TextInput, Button} from "react-native";
-import CustomButton from '../styles/customButton';
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialIcons } from '@expo/vector-icons'; 
-import { FontAwesome } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Formik } from "formik";
+import * as yup from 'yup';
+import { _getUser } from "../storage_async/async_function";
+import axios from 'axios';
 
+const createJobSchema = yup.object().shape({
+    jobTitle : yup 
+    .string()
+    .required('Job Title is Required')
+    .min(3, ({ min }) => `at least ${min} characters`),
+    jobPay : yup 
+    .string()
+    .required('Job Pay is Required'),
+    jobLocation : yup 
+    .string()
+    .required('Job Location is Required'),
+    jobDescription : yup 
+    .string()
+    .required('Job Description is Required'),
+})
 
+const createURL = 'http://10.0.2.2:80/pangasimanAPI/rest/api/createjob.php';
 
 const CreateJob = () =>{
+
+    const[user, setUser] = useState('');
+    //getting the user to attach the userID to the creation of JOB
+    const getUser = async ()=>{
+        const userData = await _getUser();
+        if( userData !== null){
+            setUser(userData);
+        }
+        else{
+            console.log('no user')
+            setUser('');
+        }
+    }
+
+    //Submit the data through axios
+    const createJob = async (values, id) => {
+        let data = {
+            "jobTitle": values.jobTitle,
+            "jobPay": values.jobPay,
+            "jobLocation": values.jobLocation,
+            "jobDescription": values.jobDescription,
+            "jobUserID": id
+        }
+
+        await axios.post(createURL, data)
+        .then((response) => {
+            console.log(response.data);
+        })
+        .catch((e)=> {
+            console.log("errors " + e );
+        })
+
+    }
+
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
     return (
         <View style={{flex: 1, backgroundColor : '#fff'}}>
             <KeyboardAwareScrollView>
-                <View style = {styles.cardContainer}>
-                    <Text style = {styles.text}>Create New Job Offer</Text>
-                    <View style ={[globalStyles.card, styles.card]} >
-                        <View style={styles.row}>
-                            <TextInput placeholder="Job Title" style = {[globalStyles.card, styles.inputCard]}/>
+                <Formik
+                    validationSchema={createJobSchema}
+                    initialValues={
+                        {
+                            jobTitle : '',
+                            jobPay : '',
+                            jobLocation : '',
+                            jobDescription : '',
+                        }
+                    }
+                    onSubmit={(values)=>{
+                            createJob(values, user.userID);
+                        }
+                    }
+                >
+                {
+                    (props) => (
+                    <View style = {styles.cardContainer}>
+                        <Text style = {styles.text}>Create New Job Offer</Text>
+                        <View style ={[globalStyles.card, styles.card]} >
+                            <View style={styles.row}>
+                                <TextInput placeholder="Job Title" style = {[globalStyles.card, styles.inputCard]}
+                                    onChangeText= {props.handleChange('jobTitle')}
+                                    value = {props.values.jobTitle}
+                                    onBlur = {props.handleBlur('jobTitle')}
+                                />
+                            </View>
+                            {
+                                props.errors.jobTitle && props.touched.jobTitle  && 
+                                <Text style= {{fontSize: 14, color :'red'}}> {props.errors.jobTitle}</Text>
+                            }
+                            <View style={styles.row}>
+                                <MaterialIcons name="attach-money" size={24} color="#5B5B5B" />
+                                <TextInput placeholder="Pay 0.00" keyboardType="numeric" style = {[globalStyles.card, styles.inputCard]}
+                                    onChangeText= {props.handleChange('jobPay')}
+                                    value = {props.values.jobPay}
+                                    onBlur = {props.handleBlur('jobPay')}
+                                />
+                            </View>
+                            {
+                                props.errors.jobPay && props.touched.jobPay  && 
+                                <Text style= {{fontSize: 14, color :'red'}}> {props.errors.jobPay}</Text>
+                            }
+                            <View style={styles.row}>
+                                <MaterialIcons name="location-pin" size={24} color="#5B5B5B" />
+                                <TextInput placeholder="Job Location" style = {[globalStyles.card, styles.inputCard]}
+                                    onChangeText= {props.handleChange('jobLocation')}
+                                    value = {props.values.jobLocation}
+                                    onBlur = {props.handleBlur('jobLocation')}
+                                />
+                            </View>
+                            {
+                                props.errors.jobLocation && props.touched.jobLocation  && 
+                                <Text style= {{fontSize: 14, color :'red'}}> {props.errors.jobLocation}</Text>
+                            }
                         </View>
-                        <View style={styles.row}>
-                            <MaterialIcons name="attach-money" size={24} color="#5B5B5B" />
-                            <TextInput placeholder="Pay 0.00" keyboardType="numeric" style = {[globalStyles.card, styles.inputCard]}/>
+                        <View style ={[globalStyles.card, styles.card]} >
+                            <Text style = {{
+                                fontFamily : 'Mont-Bold',
+                                fontSize : 14,
+                            }}>
+                                Description
+                            </Text>
+                            <View style={styles.row}>
+                                <TextInput placeholder="Description" style = {[globalStyles.card, styles.inputCard]} multiline={true}
+                                    onChangeText= {props.handleChange('jobDescription')}
+                                    value = {props.values.jobDescription}
+                                    onBlur = {props.handleBlur('jobDescription')}
+                                />
+                            </View>
+                            {
+                                props.errors.jobDescription && props.touched.jobDescription  && 
+                                <Text style= {{fontSize: 14, color :'red'}}> {props.errors.jobDescription}</Text>
+                            }
                         </View>
-                        <View style={styles.row}>
-                            <MaterialIcons name="location-pin" size={24} color="#5B5B5B" />
-                            <TextInput placeholder="Job Location" style = {[globalStyles.card, styles.inputCard]}/>
+                        <View style = {styles.btnContainer}>
+                            <Button title="CREATE" color='#189AB4' onPress={props.handleSubmit}/>
                         </View>
                     </View>
-                    <View style ={[globalStyles.card, styles.card]} >
-                        <Text style = {{
-                            fontFamily : 'Mont-Bold',
-                            fontSize : 14,
-                        }}>
-                            Description
-                        </Text>
-                        <View style={styles.row}>
-                            <TextInput placeholder="Description" style = {[globalStyles.card, styles.inputCard]} multiline={true}/>
-                        </View>
-                    </View>
-                    <View style = {styles.btnContainer}>
-                        <Button title="CREATE" color='#189AB4'/>
-                    </View>
-                </View>
+                    )
+                }
+                </Formik>
             </KeyboardAwareScrollView>
         </View>
 

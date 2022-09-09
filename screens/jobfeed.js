@@ -6,27 +6,6 @@ import JobCard from '../components/jobs_card';
 
 
 const JobFeed = ({navigation}) =>{
-    //BackPress Remove for Logging Out
-    const backAction = () => {
-        Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-          {
-            text: "Cancel",
-            onPress: () => null,
-            style: "cancel"
-          },
-          { text: "YES", onPress: () => BackHandler.exitApp() }
-        ]);
-        return true;
-    };
-    
-    useEffect(
-        () => {
-            BackHandler.addEventListener("hardwareBackPress", backAction);
-            return () => BackHandler.removeEventListener("hardwareBackPress", backAction);
-        }
-        //add another here later
-    ,[]);
-
     const [jobs, setJobs] = useState(
     [
       {
@@ -48,7 +27,7 @@ const JobFeed = ({navigation}) =>{
             data={jobs}
             renderItem = {({item})=>{
               return(
-                <JobCard item = {item}/>
+                <JobCard item = {item} navigation = {navigation}/>
               )
             }}
           />
