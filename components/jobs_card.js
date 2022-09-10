@@ -10,10 +10,10 @@ import { FontAwesome } from '@expo/vector-icons';
 
 const JobCard = ({item, navigation}) => {
     return (
-        <TouchableOpacity>
-            <View style={[styles.cardContainer, globalStyles.card]}>
+            <View style={[globalStyles.card, styles.cardContainer]}>
+                <TouchableOpacity>
                 <View style = {styles.itemContainer}>
-                    <Text style={[styles.cardText]}>{item.jobName}</Text>
+                    <Text style={[styles.cardText]}>{item.jobTitle}</Text>
                 </View>
                 <View style = {styles.itemContainer}>
                     <MaterialIcons name="attach-money" size={24} color="#5B5B5B" />
@@ -37,15 +37,15 @@ const JobCard = ({item, navigation}) => {
                     }>
                         <View style = {styles.itemContainer}>
                             <FontAwesome name="user-circle" size={24} color="black" />
-                            <Text style={[styles.cardTextRegular]}> {item.jobEmp}</Text>
+                            <Text style={[styles.cardTextRegular]}> {item.firstname}</Text>
                         </View>
                     </TouchableOpacity>
                     <CustomButton onPress={()=>{}} 
                         title={'Apply'} styleButton={styles.styleBtn} styleText={styles.btnText}
                     />
                 </View>
+                </TouchableOpacity>
             </View>
-        </TouchableOpacity>
     );
 }
 

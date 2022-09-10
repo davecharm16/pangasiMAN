@@ -1,5 +1,5 @@
 import React , {useState, useEffect} from "react";
-import { View, Text, StyleSheet, TextInput, Button} from "react-native";
+import { View, Text, StyleSheet, TextInput, Button, Alert} from "react-native";
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -24,11 +24,11 @@ const createJobSchema = yup.object().shape({
     .required('Job Description is Required'),
 })
 
-const createURL = 'http://10.0.2.2:80/pangasimanAPI/rest/api/createjob.php';
+const createURL = 'http://192.168.100.54/pangasimanAPI/rest/api/createjob.php';
 
 const CreateJob = () =>{
 
-    const[user, setUser] = useState('');
+    const[user, setUser] = useState(null);
     //getting the user to attach the userID to the creation of JOB
     const getUser = async ()=>{
         const userData = await _getUser();
@@ -37,7 +37,7 @@ const CreateJob = () =>{
         }
         else{
             console.log('no user')
-            setUser('');
+            setUser(null);
         }
     }
 
@@ -53,10 +53,13 @@ const CreateJob = () =>{
 
         await axios.post(createURL, data)
         .then((response) => {
+            let resp = response.data.description;
+            Alert.alert(resp);
             console.log(response.data);
         })
         .catch((e)=> {
             console.log("errors " + e );
+            Alert.alert("errors" + e);
         })
 
     }
@@ -79,8 +82,11 @@ const CreateJob = () =>{
                             jobDescription : '',
                         }
                     }
-                    onSubmit={(values)=>{
-                            createJob(values, user.userID);
+                    onSubmit={(values, actions)=>{
+                            if(user != null){
+                                createJob(values, user.userID);
+                            }
+                            actions.resetForm();
                         }
                     }
                 >

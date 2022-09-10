@@ -21,7 +21,7 @@ const loginValidationSchema = yup.object().shape({
 })
 
 //Change this on deployment to host
-const logURL  = "http://10.0.2.2:80/pangasimanAPI/rest/api/log_user.php";
+const logURL  = "http://192.168.100.54/pangasimanAPI/rest/api/log_user.php";
 
 export default function LoginForm ({ navigation, onLog }) {
 

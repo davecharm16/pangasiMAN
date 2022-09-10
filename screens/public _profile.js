@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import { Alert,Text, View, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { Alert,Text, View, StyleSheet, Button, TouchableOpacity, ScrollView} from 'react-native';
 import { _getUser } from '../storage_async/async_function';
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,7 +9,7 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import { ScrollView} from 'react-native-gesture-handler';
+// import { ScrollView} from 'react-native-gesture-handler';
 
 
 const PublicProfile = ()=>{
@@ -33,7 +33,10 @@ const PublicProfile = ()=>{
 
     return (
         <View style = {styles.container }>
-            <ScrollView>
+            <ScrollView  
+                showsVerticalScrollIndicator={false}
+                nestedScrollEnabled = {true}
+            >
                 <Text style = {styles.text}>Personal Information</Text>
                 <View style = {[globalStyles.card, globalStyles.card_default]}>
                     <View style={styles.innerContainer}>
@@ -111,11 +114,27 @@ const PublicProfile = ()=>{
                         </TouchableOpacity>
                     </View>
                 <View style={styles.reviewsContainer}>
-                    
-                    <ScrollView>
+                    <ScrollView 
+                    nestedScrollEnabled = {true}
+                    >
                         <View style = {[globalStyles.card, globalStyles.card_default]}>
                             <Text style={styles.textName}>
                                 Walter O Brien
+                            </Text>
+                            <View style = {globalStyles.row}>
+                                <FontAwesome name="star" size={14} color="#189AB4" />
+                                <FontAwesome name="star" size={14} color="#189AB4" />
+                                <FontAwesome name="star" size={14} color="#189AB4" />
+                                <FontAwesome name="star" size={14} color="#189AB4" />
+                                <FontAwesome name="star" size={14} color="#189AB4" />
+                            </View>
+                            <Text>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
+                            </Text>
+                        </View>
+                        <View style = {[globalStyles.card, globalStyles.card_default]}>
+                            <Text style={styles.textName}>
+                                Tobias Curtis
                             </Text>
                             <View style = {globalStyles.row}>
                                 <FontAwesome name="star" size={14} color="#189AB4" />
@@ -152,7 +171,9 @@ const PublicProfile = ()=>{
                 <Text style = {styles.text}>Job Offered</Text>
 
                 <View style={styles.reviewsContainer}>
-                    <ScrollView>
+                    <ScrollView
+                        nestedScrollEnabled = {true}
+                    >
                         <View style = {[globalStyles.card, globalStyles.card_default]}>
                             <Text style={styles.textName}>
                                 Home Cleaning Service
@@ -181,7 +202,6 @@ const PublicProfile = ()=>{
                         </View>
                     </ScrollView>
                 </View>
-
             </ScrollView>
         </View>
     )

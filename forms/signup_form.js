@@ -70,8 +70,8 @@ const signInValidationSchema = yup.object().shape({
 
 const SignUpForm =({navigation})=>{
 
-    const createUserURL = "http://10.0.2.2:80/pangasimanAPI/rest/api/createuser.php";
-    const createAddressURL = "http://10.0.2.2:80/pangasimanAPI/rest/api/createaddress.php";
+    const createUserURL = "http://192.168.100.54/pangasimanAPI/rest/api/createuser.php";
+    const createAddressURL = "http://192.168.100.54/pangasimanAPI/rest/api/createaddress.php";
 
     const createAddress = async (values, id) =>{
         const data = {
