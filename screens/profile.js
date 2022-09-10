@@ -26,7 +26,6 @@ const Profile = (props)=>{
     const onRefresh = React.useCallback(() => {
         // console.log(search);
         getProfileData();
-        funct();
         setRefreshing(true);
         wait(2000).then(() => setRefreshing(false));
       }, []);
@@ -68,7 +67,8 @@ const Profile = (props)=>{
         .then((response) => {
             console.log(response.data.data[0]);
             setProfileData(response.data.data[0]);
-            funct(response.data.data[0].hasProfile)
+            funct(response.data.data[0]);
+            console.log(profileData);
             setLoading(false);
         })
         .catch((e)=>{
@@ -77,9 +77,9 @@ const Profile = (props)=>{
     }
 
     const funct = async (hasProfile) => {
-        if(hasProfile != "0"){
+        if(hasProfile.hasProfile != "0"){
             const storage = getStorage();
-            const imageName = '/'+profileData.firstname+profileData.userID + 'images.jpg';
+            const imageName = '/'+hasProfile.firstname+hasProfile.userID + 'images.jpg';
             console.log(imageName);
             const reference = ref(storage, imageName);
             await getDownloadURL(reference).then((x) => {
@@ -109,7 +109,7 @@ const Profile = (props)=>{
             // alert('Screen is focused');
             // The screen is focused
             // Call any action
-            funct(profileData);
+            // funct();
             // getUser();
             getProfileData();
           });
