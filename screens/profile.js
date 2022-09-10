@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import {Text, View, StyleSheet, Button,TouchableOpacity, ScrollView, ActivityIndicator, Image } from 'react-native';
+import {Text, View, StyleSheet, Button,TouchableOpacity, ScrollView, ActivityIndicator, Image, RefreshControl } from 'react-native';
 import { _getUser } from '../storage_async/async_function';
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -19,6 +19,18 @@ initializeApp(fireBaseConfig);
 
 const Profile = (props)=>{
 
+    const wait = (timeout) => {
+        return new Promise(resolve => setTimeout(resolve, timeout));
+    }
+    const [refreshing, setRefreshing] = React.useState(false);
+    const onRefresh = React.useCallback(() => {
+        // console.log(search);
+        getProfileData();
+        funct();
+        setRefreshing(true);
+        wait(2000).then(() => setRefreshing(false));
+      }, []);
+
     const readProfileURL = "http://192.168.100.54/pangasimanAPI/rest/api/readapi.php";
 
     const[user, setUser] = useState('');
@@ -26,16 +38,16 @@ const Profile = (props)=>{
     const[profileData, setProfileData] = useState(null);
     const[loading, setLoading] = useState(true);
 
-    const getUser = async ()=>{
-        const userData = await _getUser();
-        if( userData !== null){
-            setUser(userData);
-        }
-        else{
-            console.log('no user')
-            setUser('');
-        }
-    }
+    // const getUser = async ()=>{
+    //     const userData = await _getUser();
+    //     if( userData !== null){
+    //         setUser(userData);
+    //     }
+    //     else{
+    //         console.log('no user')
+    //         setUser('');
+    //     }
+    // }
 
     const getProfileData = async () => {
         const userData = await _getUser();
@@ -56,16 +68,16 @@ const Profile = (props)=>{
         .then((response) => {
             console.log(response.data.data[0]);
             setProfileData(response.data.data[0]);
+            funct(response.data.data[0].hasProfile)
             setLoading(false);
         })
         .catch((e)=>{
             console.log("Error on Getting Profile Data" + e);
         })
     }
-    
-    useEffect(
-    () => {
-        const funct = async () => {
+
+    const funct = async (hasProfile) => {
+        if(hasProfile != "0"){
             const storage = getStorage();
             const imageName = '/'+profileData.firstname+profileData.userID + 'images.jpg';
             console.log(imageName);
@@ -75,23 +87,37 @@ const Profile = (props)=>{
                 setUrl(x);
             })
         }
-
-        getUser();
-        getProfileData();
+        else{
+            const storage = getStorage();
+            const imageName = '/images.jpg';
+            console.log(imageName);
+            const reference = ref(storage, imageName);
+            await getDownloadURL(reference).then((x) => {
+                console.log(x);
+                setUrl(x);
+            })
+        }
+    }
+    
+    useEffect(
+    () => {
+        
+        // getUser();
+        // getProfileData();
         // funct();
         const unsubscribe = props.navigation.addListener('focus', () => {
             // alert('Screen is focused');
             // The screen is focused
             // Call any action
-            funct();
-            getUser();
+            funct(profileData);
+            // getUser();
             getProfileData();
           });
       
           // Return the function to unsubscribe from the event so it gets removed on unmount
         return unsubscribe;
     }
-    , [url]);
+    , [url, profileData, user]);
 
     return (
         <View style = {styles.container }>
@@ -101,6 +127,12 @@ const Profile = (props)=>{
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled = {true}
+                refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                }
             >
                 <Text style = {styles.text}>Personal Information</Text>
                 <View style = {[globalStyles.card, globalStyles.card_default]}>

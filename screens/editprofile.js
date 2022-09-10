@@ -4,14 +4,31 @@ import * as ImagePicker from 'expo-image-picker';
 import fireBaseConfig from '../fireBaseConfig';
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
+import axios from 'axios';
 
 initializeApp(fireBaseConfig);
 
 
 const EditProfile = ({route, navigation}) => {
+    const updateURL = "http://192.168.100.54/pangasimanAPI/rest/api/updateapi.php";
     const {data} = route.params;
     const [image, setImage] = useState('');
 
+
+    const setProfilePic = async()=>{
+        let body = {
+            "action" : "update_profile_pic",
+            "userID" : data.userID
+        }
+
+        axios.post(updateURL, body)
+        .then((response)=>{
+            console.log(response.data.message);
+        })
+        .catch((e)=>{
+            console.log("ERROR UPDATING PROF. PIC" + e);
+        })
+    }
 
 
     const pickImage = async () => {
@@ -30,6 +47,7 @@ const EditProfile = ({route, navigation}) => {
             // setImage(result.uri);
             uploadImage(result.uri)
             .then(()=>{
+                setProfilePic();
                 Alert.alert('Image is uploaded');
             })
         }
