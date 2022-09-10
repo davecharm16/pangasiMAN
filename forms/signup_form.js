@@ -16,13 +16,13 @@ const signInValidationSchema = yup.object().shape({
     first_name : yup 
     .string()
     .required('First Name is Required')
-    .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ")
-    .min(2, ({ min }) => `First Name must be at least ${min} characters`),
+    .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed")
+    .min(2, ({ min }) => `at least ${min} characters`),
     last_name : yup 
     .string()
     .required('Last Name is Required')
-    .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ")
-    .min(2, ({ min }) => `Last Name must be at least ${min} characters`),
+    .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed")
+    .min(2, ({ min }) => `at least ${min} characters`),
     sex : yup 
     .string()
     .required('Sex is required')
@@ -70,11 +70,11 @@ const signInValidationSchema = yup.object().shape({
 
 const SignUpForm =({navigation})=>{
 
-    const createUserURL = "http://10.0.2.2:80/pangasimanAPI/rest/api/createuser.php";
-    const createAddressURL = "http://10.0.2.2:80/pangasimanAPI/rest/api/createaddress.php";
+    const createUserURL = "http://192.168.100.54/pangasimanAPI/rest/api/createuser.php";
+    const createAddressURL = "http://192.168.100.54/pangasimanAPI/rest/api/createaddress.php";
 
     const createAddress = async (values, id) =>{
-        data = {
+        const data = {
             "house_no" : values.house_no,
             "street" : values.street,
             "baranggay" : values.baranggay,
@@ -103,7 +103,7 @@ const SignUpForm =({navigation})=>{
     }
 
     const createUser = async (values) => {
-        data = {
+        const data = {
             "firstname": values.first_name,
             "lastname": values.last_name,
             "birthday": values.birthday,
@@ -227,21 +227,25 @@ const SignUpForm =({navigation})=>{
                                 <Text style= {styles.form_head}> Address</Text>
 
                                 <View style = {styles.inputContainer}>
-                                    <TextInput 
-                                        placeholder='House No.' placeholderTextColor={'#189AB4'} 
-                                        style = {[styles.formInput, globalStyles.dropShadow]}
-                                        onChangeText= {props.handleChange('house_no')}
-                                        keyboardType ='number-pad'
-                                        value = {props.values.house_no}
-                                        // onBlur = {props.handleBlur('house_no')}
-                                    />
-                                    <TextInput 
-                                        placeholder='Street' placeholderTextColor={'#189AB4'} 
-                                        style = {[styles.formInput, globalStyles.dropShadow]}
-                                        onChangeText= {props.handleChange('street')}
-                                        value = {props.values.street}
-                                        // onBlur = {props.handleBlur('street')}
-                                    />
+                                    <View style = {styles.formInputContainer}>
+                                        <TextInput 
+                                            placeholder='House No.' placeholderTextColor={'#189AB4'} 
+                                            style = {[styles.formInput, globalStyles.dropShadow]}
+                                            onChangeText= {props.handleChange('house_no')}
+                                            keyboardType ='number-pad'
+                                            value = {props.values.house_no}
+                                            // onBlur = {props.handleBlur('house_no')}
+                                        />
+                                    </View>
+                                    <View style = {styles.formInputContainer}>
+                                        <TextInput 
+                                            placeholder='Street' placeholderTextColor={'#189AB4'} 
+                                            style = {[styles.formInput, globalStyles.dropShadow]}
+                                            onChangeText= {props.handleChange('street')}
+                                            value = {props.values.street}
+                                            // onBlur = {props.handleBlur('street')}
+                                        />
+                                    </View>
                                 </View>
 
                                 <View style = {styles.inputContainer}>
@@ -411,6 +415,7 @@ const styles = StyleSheet.create({
         padding : 10,
     },
     inputContainer : {
+        height : 80,
         flexDirection : 'row', 
         justifyContent : 'space-between',
     },
@@ -419,7 +424,8 @@ const styles = StyleSheet.create({
         flexDirection : 'column',
     },
     formInput :{
-        flex : 1,
+        height: 50,
+        // flex : 1,
         margin: 10,
         backgroundColor :'#F1F1F1',
         paddingVertical: 5,

@@ -8,6 +8,8 @@ import SignUp from '../screens/signup';
 import MyDrawer from './drawerStack';
 import { _getSignedIn, _setLogOut } from '../storage_async/async_function';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PublicProfile from '../screens/public _profile';
+import EditProfile from '../screens/editprofile';
 
 const Stack = createNativeStackNavigator();
 
@@ -93,6 +95,8 @@ function Navigation() {
               component={DrawerScreenMain}
               options={{ headerShown: false }}
             />
+            <Stack.Screen name="PublicProfile" component={PublicProfile} options={{headerShown: false, headerTitle: "Profile"}} />
+            <Stack.Screen name="EditProfile" component={EditProfile} options={{headerShown: false, headerTitle: "Edit"}} />
           </>
           ) : (
             <>

@@ -31,5 +31,15 @@ export const globalStyles = StyleSheet.create({
         marginBottom: 2,
         marginLeft: 5,
         marginRight: 5,
+    },
+    card_default : {
+        backgroundColor : '#f8f8f8',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+    },
+    row : {
+        flexDirection : 'row',
+        paddingVertical : 2,
+        alignItems: 'center',
     }
 });

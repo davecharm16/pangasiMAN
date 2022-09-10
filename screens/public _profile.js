@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import {Text, View, StyleSheet, Button,TouchableOpacity, ScrollView, ActivityIndicator, Image, RefreshControl } from 'react-native';
+import { Alert,Text, View, StyleSheet, Button, TouchableOpacity, ScrollView} from 'react-native';
 import { _getUser } from '../storage_async/async_function';
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,33 +9,12 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import axios from 'axios';
-import fireBaseConfig from '../fireBaseConfig';
-import { initializeApp } from 'firebase/app';
-import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+// import { ScrollView} from 'react-native-gesture-handler';
 
 
-initializeApp(fireBaseConfig);
+const PublicProfile = ()=>{
 
-const Profile = (props)=>{
-
-    const wait = (timeout) => {
-        return new Promise(resolve => setTimeout(resolve, timeout));
-    }
-    const [refreshing, setRefreshing] = React.useState(false);
-    const onRefresh = React.useCallback(() => {
-        // console.log(search);
-        getProfileData();
-        setRefreshing(true);
-        wait(2000).then(() => setRefreshing(false));
-      }, []);
-
-    const readProfileURL = "http://192.168.100.54/pangasimanAPI/rest/api/readapi.php";
-
-    const[user, setUser] = useState('');
-    const [url, setUrl] = useState();
-    const[profileData, setProfileData] = useState(null);
-    const[loading, setLoading] = useState(true);
+    // const[user, setUser] = useState('');
 
     // const getUser = async ()=>{
     //     const userData = await _getUser();
@@ -48,135 +27,35 @@ const Profile = (props)=>{
     //     }
     // }
 
-    const getProfileData = async () => {
-        const userData = await _getUser();
-        if( userData !== null){
-            setUser(userData);
-        }
-        else{
-            console.log('no user')
-            setUser('');
-        }
-
-        let data = {
-            "action" : "get_profile",
-            "userID" : userData.userID,
-        }
-
-        await axios.post(readProfileURL, data)
-        .then((response) => {
-            console.log(response.data.data[0]);
-            setProfileData(response.data.data[0]);
-            funct(response.data.data[0]);
-            console.log(profileData);
-            setLoading(false);
-        })
-        .catch((e)=>{
-            console.log("Error on Getting Profile Data" + e);
-        })
-    }
-
-    const funct = async (hasProfile) => {
-        if(hasProfile.hasProfile != "0"){
-            const storage = getStorage();
-            const imageName = '/'+hasProfile.firstname+hasProfile.userID + 'images.jpg';
-            console.log(imageName);
-            const reference = ref(storage, imageName);
-            await getDownloadURL(reference).then((x) => {
-                console.log(x);
-                setUrl(x);
-            })
-        }
-        else{
-            const storage = getStorage();
-            const imageName = '/images.jpg';
-            console.log(imageName);
-            const reference = ref(storage, imageName);
-            await getDownloadURL(reference).then((x) => {
-                console.log(x);
-                setUrl(x);
-            })
-        }
-    }
-    
-    useEffect(
-    () => {
-        
-        // getUser();
-        // getProfileData();
-        // funct();
-        const unsubscribe = props.navigation.addListener('focus', () => {
-            // alert('Screen is focused');
-            // The screen is focused
-            // Call any action
-            // funct();
-            // getUser();
-            getProfileData();
-          });
-      
-          // Return the function to unsubscribe from the event so it gets removed on unmount
-        return unsubscribe;
-    }
-    , [url, profileData, user]);
+    // useEffect(() => {
+    //     getUser();
+    // }, []);
 
     return (
         <View style = {styles.container }>
-            {loading ? 
-            <ActivityIndicator size="large" color="#189AB4" ></ActivityIndicator> 
-            : 
-            <ScrollView
+            <ScrollView  
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled = {true}
-                refreshControl={
-                    <RefreshControl
-                      refreshing={refreshing}
-                      onRefresh={onRefresh}
-                    />
-                }
             >
                 <Text style = {styles.text}>Personal Information</Text>
                 <View style = {[globalStyles.card, globalStyles.card_default]}>
                     <View style={styles.innerContainer}>
                         <View style = {styles.image_profile}>
-                            <Image 
-                                style = 
-                                {{
-                                width: '100%',
-                                height: '100%',
-                                borderRadius : 100,
-                                }} 
-                                source = {{uri:url}}
-                            />
+
                         </View>
                         <View style = {styles.textContainer}>
-                            <Text style = {styles.textName}>{profileData.firstname} {profileData.lastname}</Text>
+                            <Text style = {styles.textName}>Test Name</Text>
                             <View style = {globalStyles.row}>
                                 <FontAwesome5 name="user" size={18} color="#5B5B5B" />
                                 <Text style = {styles.regText}>
-                                    {user.age} years old, {user.sex}
+                                  18 years old,  Male
                                 </Text>  
                             </View>
-                            <View style = {[globalStyles.row, {paddingVertical : 2,
-                                alignItems: 'flex-start',}]}>
+                            <View style = {globalStyles.row}>
                                 <SimpleLineIcons name="location-pin" size={18} color="#5B5B5B" />
                                 <Text style = {styles.regText}>
-                                    {profileData.houseNo}{profileData.street} {profileData.baranggay}, {profileData.municipality} {profileData.province}
+                                    #452 Talospatang, Malasiqui, Pangasinan
                                 </Text>  
-                            </View>
-                            <View style = {styles.edit}>
-                                <TouchableOpacity 
-                                    onPress={
-                                        // navigation.navigate('PublicProfile')
-                                        ()=>{
-                                            console.log('EditPressed')
-                                            props.navigation.navigate('EditProfile', {
-                                                data : profileData 
-                                            });
-                                        }
-                                    }
-                                >
-                                    <FontAwesome5 name="edit" size={24} color="#189AB4" />
-                                </TouchableOpacity>
                             </View>
                         </View>
                     </View>
@@ -191,13 +70,13 @@ const Profile = (props)=>{
                     <View style = {globalStyles.row}>
                         <AntDesign name="phone" size={18} color="#5B5B5B" />
                         <Text style = {styles.regText}>
-                            {profileData.contact_no}
+                            09151869987
                         </Text>  
                     </View>
                     <View style = {globalStyles.row}>
                         <MaterialCommunityIcons name="email-outline" size={18} color="#5B5B5B" />
                         <Text style = {styles.regText}>
-                            {profileData.email}
+                            dcbb@gmail.com
                         </Text>  
                     </View>
                 </View>
@@ -205,29 +84,18 @@ const Profile = (props)=>{
                 {/* hack */}
                 <View style = {{height : 10}}></View>
                 {/* hack */}
-                <View style = {{flexDirection :'row', justifyContent: 'space-between', paddingRight:10}}>
-                    <Text style = {styles.text}>Skills</Text>
-                    <TouchableOpacity>
-                            <FontAwesome5 name="plus" size={24} color="#189AB4" />
-                    </TouchableOpacity>
-                </View>
+                <Text style = {styles.text}>Skills</Text>
                 <View style = {[globalStyles.card, globalStyles.card_default]}>
                     <View style = {globalStyles.row}>
                         <View style={styles.skillContainer}>
                             <Text style = {styles.skillText}>
                                 Cooking
                             </Text>
-                            <TouchableOpacity>
-                                <Feather name="x-circle" size={18} color="white" />
-                            </TouchableOpacity>  
                         </View>
                         <View style={styles.skillContainer}>
                             <Text style = {styles.skillText}>
                                 Plumbing
                             </Text>  
-                            <TouchableOpacity>
-                                <Feather name="x-circle" size={18} color="white" />
-                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
@@ -235,11 +103,19 @@ const Profile = (props)=>{
                 {/* hack */}
                 <View style = {{height : 10}}></View>
                 {/* hack */}
-                <Text style = {styles.text}>Service Reviews</Text>
-
+                <View style = {{flexDirection :'row', justifyContent: 'space-between'}}>
+                        <Text style = {styles.text}>Service Reviews</Text>
+                        <TouchableOpacity
+                            onPress={ ()=>{
+                                console.log('Give Review');
+                            }}
+                        >
+                            <FontAwesome5 name="plus" size={24} color="#189AB4" />
+                        </TouchableOpacity>
+                    </View>
                 <View style={styles.reviewsContainer}>
-                    <ScrollView
-                        nestedScrollEnabled = {true}
+                    <ScrollView 
+                    nestedScrollEnabled = {true}
                     >
                         <View style = {[globalStyles.card, globalStyles.card_default]}>
                             <Text style={styles.textName}>
@@ -326,10 +202,7 @@ const Profile = (props)=>{
                         </View>
                     </ScrollView>
                 </View>
-
             </ScrollView>
-            }
-            
         </View>
     )
 }
@@ -399,4 +272,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default Profile;
+export default PublicProfile;
