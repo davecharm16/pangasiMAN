@@ -49,7 +49,7 @@ const PublicProfile = ()=>{
                                 <FontAwesome5 name="user" size={18} color="#5B5B5B" />
                                 <Text style = {styles.regText}>
                                   18 years old,  Male
-                                </Text>  
+                                </Text>
                             </View>
                             <View style = {globalStyles.row}>
                                 <SimpleLineIcons name="location-pin" size={18} color="#5B5B5B" />

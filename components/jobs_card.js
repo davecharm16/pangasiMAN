@@ -4,6 +4,8 @@ import CustomButton from '../styles/customButton';
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { FontAwesome } from '@expo/vector-icons';
+import { Octicons } from '@expo/vector-icons';
+
 // import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
@@ -11,8 +13,14 @@ import { FontAwesome } from '@expo/vector-icons';
 const JobCard = ({item, navigation}) => {
     return (
             <View style={[globalStyles.card, styles.cardContainer]}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=>{
+                    navigation.navigate('ViewJob', {
+                        data : item
+                    });
+                }}>
                 <View style = {styles.itemContainer}>
+                    <Octicons name="briefcase" size={24} color="black" />
+                    <View style = {{width:10}}></View>
                     <Text style={[styles.cardText]}>{item.jobTitle}</Text>
                 </View>
                 <View style = {styles.itemContainer}>
