@@ -9,16 +9,25 @@ import * as yup from 'yup';
 import { _getUser } from "../storage_async/async_function";
 import { Octicons } from '@expo/vector-icons';
 import axios from 'axios';
+import moment from 'moment';
+import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 
-const readJobsURL = 'http://192.168.100.54/pangasimanAPI/rest/api/createjob.php';
+
+const readCommentsURL = 'http://192.168.100.54/pangasimanAPI/rest/api/readapi.php';
 
 const ViewJob = ({navigation, route}) =>{
+
+    const timePosted=(time)=>{
+        return moment(time).fromNow();
+    }
+
     const {data} = route.params;
     console.log(data);
     const[user, setUser] = useState(null);
     const [foundComment, setFoundComment] = useState(false);
-    const[comment, setComment] = useState(null);
+    const[comment, setComment] = useState([]);
     //getting the user to attach the userID to the creation of JOB
     const getUser = async ()=>{
         const userData = await _getUser();
@@ -32,14 +41,31 @@ const ViewJob = ({navigation, route}) =>{
     }
 
     //Submit the data through axios
-    const viewJob = async (jobID) => {
-        
+    const getComments = async () => {
+        let body = {
+            "action" : "get_comments",
+            "jobID" : data.jobID
+        }
 
+        await axios.post(readCommentsURL, body)
+        .then((response) => {
+            if(response.data.message=="success"){
+                setComment(response.data.data);
+                setFoundComment(true);
+            }
+            else{
+                setFoundComment(false);
+            }
+        })
+        .catch((error) => {
+            console.log("Error in Comments " + error);
+        })
     }
 
 
     useEffect(() => {
         getUser();
+        getComments();
     }, []);
 
     return (
@@ -57,6 +83,10 @@ const ViewJob = ({navigation, route}) =>{
                                 </Text>
                             </View>
                         </TouchableOpacity>
+                        <View style = {styles.row}>
+                            <FontAwesome5 name="business-time" size={24} color="black" />
+                            <Text style={[styles.cardTextRegular, {fontSize:14}]}>  Posted {timePosted(data.created_at)}</Text>
+                        </View>
                     </View>
                     <View style ={[globalStyles.card, styles.card]} >
                         <View style={styles.row}>
@@ -66,7 +96,7 @@ const ViewJob = ({navigation, route}) =>{
                         
                         <View style={styles.row}>
                             <MaterialIcons name="attach-money" size={24} color="#5B5B5B" />
-                            <Text style={[styles.cardText,styles.grayText]}> {data.jobPay} </Text>
+                            <Text style={[styles.cardText,styles.grayText]}> {data.jobPay} Php</Text>
                         </View>
                         
                         <View style={styles.row}>
@@ -82,7 +112,7 @@ const ViewJob = ({navigation, route}) =>{
                             Description
                         </Text>
                         <View style={styles.row}>
-                            <Text style = {styles.description}> {data.jobDescription}</Text>
+                            <Text style = {[styles.description, {fontFamily:'Inter-Regular', color:'#189AB4'}]}> {data.jobDescription}</Text>
                         </View>
                     </View>
 
@@ -98,8 +128,28 @@ const ViewJob = ({navigation, route}) =>{
                     {!foundComment &&
                         <Text style = {styles.cardText}>No Inquiries Yet</Text>
                     }
+                    {comment.map((item, index) => {
+                            return (
+                                <View style ={[globalStyles.card,styles.card, {backgroundColor:'#fff', borderRadius: 4}]} >
+                                <TouchableOpacity>
+                                    <View style = {styles.row}>
+                                        <FontAwesome name="user-circle" size={24} color="black" />
+                                        <View style={{width: 10}}></View>
+                                        <Text style = {styles.cardText}>
+                                        {item.firstname} {item.lastname}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <View style = {styles.row}>
+                                    <Ionicons name="time-outline" size={24} color="black" />
+                                    <Text style={[styles.cardTextRegular, {fontSize:14}]}> {timePosted(item.created_at)}</Text>
+                                </View>
+                                <Text style={{fontFamily:'Inter-Regular', color: '#189AB4'}}>{item.comment}</Text>
+                            </View>
+                        )
+                    })}
+
                 </View>
-                
             </ScrollView>
         </View>
 
@@ -117,7 +167,7 @@ const styles = StyleSheet.create({
     card :{
         backgroundColor : '#f8f8f8',
         paddingHorizontal: 20,
-        paddingVertical : 10,
+        paddingVertical : 15,
         marginTop : 10,
         marginBottom: 20,
     },

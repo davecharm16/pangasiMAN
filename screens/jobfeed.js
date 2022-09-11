@@ -84,7 +84,7 @@ const JobFeed = ({navigation}) =>{
               }
             />
           </View>
-          <Text style={styles.text}>Jobs near you</Text>
+          <Text style={styles.text}>Jobs for you</Text>
           {
             found && <Text>No Jobs Found</Text>
           }
