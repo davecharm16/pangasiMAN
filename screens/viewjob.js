@@ -16,8 +16,35 @@ import { FontAwesome5 } from '@expo/vector-icons';
 
 
 const readCommentsURL = 'http://192.168.100.54/pangasimanAPI/rest/api/readapi.php';
+const createCommentURL = 'http://192.168.100.54/pangasimanAPI/rest/api/createapi.php';
+const deleteCommentURL = 'http://192.168.100.54/pangasimanAPI/rest/api/deleteapi.php';
 
 const ViewJob = ({navigation, route}) =>{
+
+    const deleteAlert = (id) =>
+    Alert.alert(
+    "Warning!",
+    "Do you want to delete this Comment?",
+    [
+      {
+        text: "Yes",
+        onPress: () => deleteComment(id),
+        style: "cancel",
+      },
+      {
+        text: "Cancel",
+        onPress: () => console.log("cancelled"),
+        style: "cancel",
+      },
+    ],
+    {
+      cancelable: true,
+      onDismiss: () =>
+        Alert.alert(
+          "This alert was dismissed by tapping outside of the alert dialog."
+        ),
+    }
+    );
 
     const timePosted=(time)=>{
         return moment(time).fromNow();
@@ -28,6 +55,7 @@ const ViewJob = ({navigation, route}) =>{
     const[user, setUser] = useState(null);
     const [foundComment, setFoundComment] = useState(false);
     const[comment, setComment] = useState([]);
+    const[commentText, setCommentText] = useState('');
     //getting the user to attach the userID to the creation of JOB
     const getUser = async ()=>{
         const userData = await _getUser();
@@ -59,6 +87,53 @@ const ViewJob = ({navigation, route}) =>{
         })
         .catch((error) => {
             console.log("Error in Comments " + error);
+        })
+    }
+
+    const submitComment = async (comment) =>{
+        if(comment.length > 0){
+            const userData = await _getUser();
+            let body = {
+                "action" : "create_comment",
+                "commentsUserID": userData.userID,
+                "commentsJobID": data.jobID,
+                "comment": comment
+            }
+
+            await axios.post(createCommentURL, body)
+            .then((response) => {
+                if(response.data.message == "Success"){
+                    let res_description = response.data.description;
+                    Alert.alert(res_description);
+                    setCommentText('');
+                    getComments();
+                }
+                else{
+                    Alert.alert("Error in Submitting Your Comment, Try Again Later");
+                }
+            })
+            .catch((error) => {
+                console.log("Create Comment Error : " + error);
+            })
+        }
+        else{
+            Alert.alert("Comments can't be empty");
+        }
+    }
+
+    const deleteComment = async(id)=>{
+        let body = {
+            "action" : "delete_comment",
+            "id": id
+        }
+
+        await axios.post(deleteCommentURL, body)
+        .then((response) => {
+            Alert.alert(response.data);
+            getComments();
+        })
+        .catch((error) => {
+            Alert.alert("Error", "Network Error, Try Again Later");
         })
     }
 
@@ -118,9 +193,16 @@ const ViewJob = ({navigation, route}) =>{
 
                     <Text style = {[styles.text, {textTransform : 'none'}]}>Post an Inquiry</Text>
                     <View style ={[globalStyles.card, styles.card]} >
-                        <TextInput placeholder="Comment" multiline={true}/>
+                        <TextInput placeholder="Comment" multiline={true}
+                            value = {commentText}
+                            onChangeText = {(text) => {setCommentText(text)}}
+                        />
                         <View style = {{ marginTop: 10}}>
-                            <Button title="Post" color= '#189AB4'/>
+                            <Button title="Post" color= '#189AB4' onPress={
+                                ()=>{
+                                    submitComment(commentText);
+                                }
+                            }/>
                         </View>
                     </View>
                     <Text style = {[styles.text, {textTransform : 'none'}]}>Inquiries</Text>
@@ -130,16 +212,25 @@ const ViewJob = ({navigation, route}) =>{
                     }
                     {comment.map((item, index) => {
                             return (
-                                <View style ={[globalStyles.card,styles.card, {backgroundColor:'#fff', borderRadius: 4}]} >
-                                <TouchableOpacity>
-                                    <View style = {styles.row}>
-                                        <FontAwesome name="user-circle" size={24} color="black" />
-                                        <View style={{width: 10}}></View>
-                                        <Text style = {styles.cardText}>
-                                        {item.firstname} {item.lastname}
-                                        </Text>
+                                <View style ={[globalStyles.card,styles.card, {backgroundColor:'#fff', borderRadius: 4}]} key= {index} >
+                                    <View style = {[styles.row,{justifyContent:"space-between"}]}>
+                                        <TouchableOpacity>
+                                            <View style={{flexDirection: 'row'}}>
+                                                <FontAwesome name="user-circle" size={24} color="black" />
+                                                <View style={{width: 10}}></View>
+                                                <Text style = {styles.cardText}>
+                                                {item.firstname} {item.lastname}
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        {(item.commentsUserID == user.userID) &&
+                                        <View>
+                                            <TouchableOpacity onPress={()=>{deleteAlert(item.commentsID)}}>
+                                                <MaterialIcons name="delete" size={24} color="#ed5e68" />
+                                            </TouchableOpacity>
+                                        </View>
+                                        }
                                     </View>
-                                </TouchableOpacity>
                                 <View style = {styles.row}>
                                     <Ionicons name="time-outline" size={24} color="black" />
                                     <Text style={[styles.cardTextRegular, {fontSize:14}]}> {timePosted(item.created_at)}</Text>

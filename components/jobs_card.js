@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {View, Text, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import CustomButton from '../styles/customButton';
 import { globalStyles } from '../styles/globalStyle';
@@ -7,6 +7,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import moment from 'moment';
+import { _getUser } from '../storage_async/async_function';
 
 
 // import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -14,11 +15,26 @@ import moment from 'moment';
 
 
 const JobCard = ({item, navigation}) => {
+    
+    const [id, setID] = useState('');
 
+    const getUserData= async ()=>{
+        return await _getUser();
+    }
+    const userData = getUserData();
+
+    
     const timePosted=(time)=>{
         return moment(time).fromNow();
     }
-    
+
+    useEffect(() => {
+        userData.then((res)=>{
+            console.log(res);
+            setID(res.userID);
+        });
+    }, [])
+
     return (
             <View style={[globalStyles.card, styles.cardContainer]}>
                 <TouchableOpacity onPress={()=>{
@@ -56,9 +72,25 @@ const JobCard = ({item, navigation}) => {
                             <Text style={[styles.cardTextRegular]}> {item.firstname}</Text>
                         </View>
                     </TouchableOpacity>
-                    <CustomButton onPress={()=>{}} 
-                        title={'Apply'} styleButton={styles.styleBtn} styleText={styles.btnText}
-                    />
+                    {
+                        (id != item.jobUserID) &&
+                        <CustomButton onPress={()=>{}} 
+                            title={'Apply'} styleButton={styles.styleBtn} styleText={styles.btnText}
+                        />
+                    }
+                    {
+                        (id == item.jobUserID) &&
+                        // <View style = {[styles.styleBtn, {padding:5}]}>
+                        //     <Text style = {styles.btnText}>YOURS</Text>
+                        // </View>
+                        <CustomButton onPress={()=>{
+                            navigation.navigate('ViewJob', {
+                                data : item
+                            });
+                        }} 
+                            title={'Your Post'} styleButton={styles.styleBtn} styleText={styles.btnText}
+                        />
+                    }
                 </View>
                 <View style = {styles.itemContainer}>
                     <FontAwesome5 name="business-time" size={24} color="black" />
