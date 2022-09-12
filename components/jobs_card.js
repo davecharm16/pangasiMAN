@@ -42,6 +42,22 @@ const JobCard = ({item, navigation}) => {
                         data : item
                     });
                 }}>
+                {
+                        (id == item.jobUserID) &&
+                        // <View style = {[styles.styleBtn, {padding:5}]}>
+                        //     <Text style = {styles.btnText}>YOURS</Text>
+                        // </View>
+                        // <CustomButton onPress={()=>{
+                        //     navigation.navigate('ViewJob', {
+                        //         data : item
+                        //     });
+                        // }} 
+                        //     title={'Your Post'} styleButton={styles.styleBtn} styleText={styles.btnText}
+                        // />
+                        <View style = {[styles.itemContainer, {padding: 5, justifyContent:'center'}]}>
+                            <Text style={[styles.cardText, {color:"#189AB4", fontSize:18}]}>Your Post</Text>
+                        </View>
+                    }
                 <View style = {styles.itemContainer}>
                     <Octicons name="briefcase" size={24} color="black" />
                     <View style = {{width:10}}></View>
@@ -64,7 +80,10 @@ const JobCard = ({item, navigation}) => {
                 <View style = {[styles.itemContainer, styles.empData]}>
                     <TouchableOpacity onPress={
                         ()=>{
-                            navigation.navigate('PublicProfile');
+                            navigation.navigate('PublicProfile', {
+                                userID : item.jobUserID,
+                                appUserID : id,
+                            });
                         }
                     }>
                         <View style = {styles.itemContainer}>
@@ -78,7 +97,7 @@ const JobCard = ({item, navigation}) => {
                             title={'Apply'} styleButton={styles.styleBtn} styleText={styles.btnText}
                         />
                     }
-                    {
+                    {/* {
                         (id == item.jobUserID) &&
                         // <View style = {[styles.styleBtn, {padding:5}]}>
                         //     <Text style = {styles.btnText}>YOURS</Text>
@@ -90,7 +109,7 @@ const JobCard = ({item, navigation}) => {
                         }} 
                             title={'Your Post'} styleButton={styles.styleBtn} styleText={styles.btnText}
                         />
-                    }
+                    } */}
                 </View>
                 <View style = {styles.itemContainer}>
                     <FontAwesome5 name="business-time" size={24} color="black" />

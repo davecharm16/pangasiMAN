@@ -25,4 +25,8 @@ export let api  = {
     createUserURL : "createuser.php",
     //Sign Up Form
     createAddressURL : "createaddress.php",
+    //Profile
+    readSkillsURL : "readapi.php",
+    //Profile
+    createSkillsURL : "createapi.php",
 }

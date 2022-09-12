@@ -1,5 +1,5 @@
 import React , {useState, useEffect} from "react";
-import { View, Text, StyleSheet, TextInput, Button, Alert, TouchableOpacity, ScrollView} from "react-native";
+import { View, Text, StyleSheet, TextInput, Button, Alert, TouchableOpacity, ScrollView, RefreshControl} from "react-native";
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -23,7 +23,20 @@ const createCommentURL = host+directory+api.createCommentURL;
 // const deleteCommentURL = 'http://192.168.100.54/pangasimanAPI/rest/api/deleteapi.php';
 const deleteCommentURL = host+directory+api.deleteCommentURL;
 
+
+
 const ViewJob = ({navigation, route}) =>{
+
+    const wait = (timeout) => {
+        return new Promise(resolve => setTimeout(resolve, timeout));
+    }
+    const [refreshing, setRefreshing] = React.useState(false);
+    const onRefresh = React.useCallback(() => {
+        // console.log(search);
+        getComments();
+        setRefreshing(true);
+        wait(2000).then(() => setRefreshing(false));
+      }, []);
 
     const deleteAlert = (id) =>
     Alert.alert(
@@ -149,7 +162,14 @@ const ViewJob = ({navigation, route}) =>{
 
     return (
         <View style={{flex: 1, backgroundColor : '#fff'}}>
-            <ScrollView>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                }
+            >
                 <View style = {styles.cardContainer}>
                     <Text style = {styles.text}>Job Offer</Text>
                     <View style ={[globalStyles.card, styles.card]}>
