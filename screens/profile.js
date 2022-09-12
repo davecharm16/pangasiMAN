@@ -13,6 +13,7 @@ import axios from 'axios';
 import fireBaseConfig from '../fireBaseConfig';
 import { initializeApp } from 'firebase/app';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+import { api, host, directory } from '../api_link';
 
 
 initializeApp(fireBaseConfig);
@@ -30,7 +31,8 @@ const Profile = (props)=>{
         wait(2000).then(() => setRefreshing(false));
       }, []);
 
-    const readProfileURL = "http://192.168.100.54/pangasimanAPI/rest/api/readapi.php";
+    // const readProfileURL = "http://192.168.100.54/pangasimanAPI/rest/api/readapi.php";
+    const readProfileURL = host+directory+api.readProfileURL;
 
     const[user, setUser] = useState('');
     const [url, setUrl] = useState();

@@ -7,6 +7,8 @@ import * as yup from 'yup';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { _setUser } from '../storage_async/async_function';
+import { api, host, directory } from '../api_link';
+
 
 // VALIDATION SCHEMA FROM YUP
 const loginValidationSchema = yup.object().shape({
@@ -21,7 +23,8 @@ const loginValidationSchema = yup.object().shape({
 })
 
 //Change this on deployment to host
-const logURL  = "http://192.168.100.54/pangasimanAPI/rest/api/log_user.php";
+// const logURL  = "http://192.168.100.54/pangasimanAPI/rest/api/log_user.php";
+const logURL  = host+directory+api.logURL;
 
 export default function LoginForm ({ navigation, onLog }) {
 

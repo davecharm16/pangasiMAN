@@ -7,6 +7,8 @@ import { Formik } from "formik";
 import * as yup from 'yup';
 import { _getUser } from "../storage_async/async_function";
 import axios from 'axios';
+import { api, host, directory } from '../api_link';
+
 
 const createJobSchema = yup.object().shape({
     jobTitle : yup 
@@ -24,7 +26,8 @@ const createJobSchema = yup.object().shape({
     .required('Job Description is Required'),
 })
 
-const createURL = 'http://192.168.100.54/pangasimanAPI/rest/api/createjob.php';
+// const createURL = 'http://192.168.100.54/pangasimanAPI/rest/api/createjob.php';
+const createURL = host+directory+api.createURL;
 
 const CreateJob = () =>{
 

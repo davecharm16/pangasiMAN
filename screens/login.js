@@ -7,7 +7,6 @@ import { globalStyles } from '../styles/globalStyle';
 
 const Login = ({ navigation, onLog })=>{
 
-
     function onPressSignUp() {
         navigation.navigate('Signup');
     }

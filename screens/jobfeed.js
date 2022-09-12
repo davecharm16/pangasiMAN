@@ -5,8 +5,12 @@ import JobCard from '../components/jobs_card';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { globalStyles } from '../styles/globalStyle';
 import axios from 'axios';
+import { api, host, directory } from '../api_link';
 
-const getJobsURL = "http://192.168.100.54/pangasimanAPI/rest/api/readapi.php"
+// console.log(host+directory+api.getJobsURL);
+// const getJobsURL = "http://192.168.100.54/pangasimanAPI/rest/api/readapi.php";
+const getJobsURL = host+directory+api.getJobsURL;
+
 const JobFeed = ({navigation}) =>{
     const wait = (timeout) => {
       return new Promise(resolve => setTimeout(resolve, timeout));

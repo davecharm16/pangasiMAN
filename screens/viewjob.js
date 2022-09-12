@@ -12,12 +12,16 @@ import axios from 'axios';
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { api, host, directory } from '../api_link';
 
 
 
-const readCommentsURL = 'http://192.168.100.54/pangasimanAPI/rest/api/readapi.php';
-const createCommentURL = 'http://192.168.100.54/pangasimanAPI/rest/api/createapi.php';
-const deleteCommentURL = 'http://192.168.100.54/pangasimanAPI/rest/api/deleteapi.php';
+// const readCommentsURL = 'http://192.168.100.54/pangasimanAPI/rest/api/readapi.php';
+const readCommentsURL = host+directory+api.readCommentsURL;
+// const createCommentURL = 'http://192.168.100.54/pangasimanAPI/rest/api/createapi.php';
+const createCommentURL = host+directory+api.createCommentURL;
+// const deleteCommentURL = 'http://192.168.100.54/pangasimanAPI/rest/api/deleteapi.php';
+const deleteCommentURL = host+directory+api.deleteCommentURL;
 
 const ViewJob = ({navigation, route}) =>{
 
