@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, BackHandler, Text, View, StyleSheet, Button, TextInput, RefreshControl, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import { Alert, BackHandler, Text, View, StyleSheet, Button, TextInput, RefreshControl, TouchableOpacity, ScrollView, FlatList, ToastAndroid } from 'react-native';
 import JobCard from '../components/jobs_card';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -16,12 +16,29 @@ import CustomButton from '../styles/customButton';
 
 
 const readAppliedURL = host+directory+api.readAppliedURL;
+const deleteAppliedURL = host+directory+api.deleteAppliedURL;
+
 
 const AppliedJobs = ({navigation})=>{
+
+    const wait = (timeout) => {
+        return new Promise(resolve => setTimeout(resolve, timeout));
+    }
+    const [refreshing, setRefreshing] = React.useState(false);
+    const onRefresh = React.useCallback(() => {
+        // console.log(search);
+        getAppliedJobs();
+        setRefreshing(true);
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
 
     const timePosted=(time)=>{
         return moment(time).fromNow();
     }
+
+    const showToast = (message) => {
+        ToastAndroid.show(message + ", The Job is Discarded", ToastAndroid.SHORT);
+    };
 
     const [jobs, setJobs] = useState([]);
     const [user, setUser] = useState({});
@@ -42,21 +59,54 @@ const AppliedJobs = ({navigation})=>{
         })
     }
 
+    const deleteApplied = async (id) =>{
+        let body = {
+            "action" : "delete_applied",
+            "id": id
+        }
+        
+        await axios.post(deleteAppliedURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                showToast(response.data.message);
+                getAppliedJobs();
+            }
+            else{
+                ToastAndroid.show("Error Discarding Job Post!, Try again Later", ToastAndroid.SHORT);
+            }
+        })
+        .catch((e)=>{
+            Alert.alert('Network Error', "Check Your Internet Connection, Try again Later!");
+        })
+    }
+
     useEffect(() => {
         getAppliedJobs();
+        const unsubscribe = navigation.addListener('focus', () => {
+            getAppliedJobs();
+        });
+
+        // Return the function to unsubscribe from the event so it gets removed on unmount
+        return unsubscribe;
     }, [])
 
     return (
         <View style = {{flex:1, padding: 10,backgroundColor :'#fff'}}>
             <ScrollView
                 nestedScrollEnabled={true}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
             >
                 {
                     jobs.map((item, index) => {
                         return(
-                        <View>
+                        <View key={index}>
                             <View style={{height:10}}></View>
-                            <View style={[globalStyles.card, globalStyles.card_default]} key={index}>
+                            <View style={[globalStyles.card, globalStyles.card_default]}>
                                 <TouchableOpacity
                                     onPress={()=>{
                                         navigation.navigate('ViewJob', {
@@ -100,7 +150,7 @@ const AppliedJobs = ({navigation})=>{
                                         }>
                                         <View style = {globalStyles.row}>
                                             <FontAwesome name="user-circle" size={24} color="black" />
-                                            <Text style={[styles.cardTextRegular]}> {item.firstname}</Text>
+                                            <Text style={[styles.cardTextRegular]}> {item.firstname} {item.lastname}</Text>
                                         </View>
                                     </TouchableOpacity>
                                     </View>
@@ -109,7 +159,9 @@ const AppliedJobs = ({navigation})=>{
                                         <Text style={[styles.cardTextRegular, {fontSize:14}]}>  Posted {timePosted(item.created_at)}</Text>
                                     </View>
                                     <View style={styles.edit}>
-                                    <CustomButton onPress={()=>{}} 
+                                    <CustomButton onPress={()=>{
+                                        deleteApplied(item.appliedID);
+                                    }} 
                                          title={'Discard'} styleButton={styles.styleBtn} styleText={styles.btnText}
                                     />
                                     </View>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, Button, TouchableOpacity, ToastAndroid} from 'react-native';
 import CustomButton from '../styles/customButton';
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialIcons } from '@expo/vector-icons'; 
@@ -14,9 +14,9 @@ import { _getUser } from '../storage_async/async_function';
 
 
 
-const JobCard = ({item, navigation}) => {
+const JobCard = ({item, navigation, apply, passedID}) => {
     
-    const [id, setID] = useState('');
+    const [id, setID] = useState(passedID);
 
     const getUserData= async ()=>{
         return await _getUser();
@@ -27,6 +27,7 @@ const JobCard = ({item, navigation}) => {
     const timePosted=(time)=>{
         return moment(time).fromNow();
     }
+
 
     useEffect(() => {
         userData.then((res)=>{
@@ -39,7 +40,8 @@ const JobCard = ({item, navigation}) => {
             <View style={[globalStyles.card, styles.cardContainer]}>
                 <TouchableOpacity onPress={()=>{
                     navigation.navigate('ViewJob', {
-                        data : item
+                        data : item,
+                        userID : id
                     });
                 }}>
                 {
@@ -88,12 +90,17 @@ const JobCard = ({item, navigation}) => {
                     }>
                         <View style = {styles.itemContainer}>
                             <FontAwesome name="user-circle" size={24} color="black" />
-                            <Text style={[styles.cardTextRegular]}> {item.firstname}</Text>
+                            <Text style={[styles.cardTextRegular]}> {item.firstname} {item.lastname}</Text>
                         </View>
                     </TouchableOpacity>
                     {
                         (id != item.jobUserID) &&
-                        <CustomButton onPress={()=>{}} 
+                        <CustomButton onPress={()=>{
+                            apply(
+                                item.jobID,
+                                id
+                            );
+                        }} 
                             title={'Apply'} styleButton={styles.styleBtn} styleText={styles.btnText}
                         />
                     }

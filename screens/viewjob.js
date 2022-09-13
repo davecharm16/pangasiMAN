@@ -2,6 +2,7 @@ import React , {useState, useEffect} from "react";
 import { View, Text, StyleSheet, TextInput, Button, Alert, TouchableOpacity, ScrollView, RefreshControl} from "react-native";
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialIcons } from '@expo/vector-icons'; 
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { FontAwesome } from '@expo/vector-icons';
 import { Formik } from "formik";
@@ -23,6 +24,8 @@ const createCommentURL = host+directory+api.createCommentURL;
 // const deleteCommentURL = 'http://192.168.100.54/pangasimanAPI/rest/api/deleteapi.php';
 const deleteCommentURL = host+directory+api.deleteCommentURL;
 
+const readApplicantsURL = host+directory+api.readApplicantsURL;
+
 
 
 const ViewJob = ({navigation, route}) =>{
@@ -33,7 +36,9 @@ const ViewJob = ({navigation, route}) =>{
     const [refreshing, setRefreshing] = React.useState(false);
     const onRefresh = React.useCallback(() => {
         // console.log(search);
+        getUser();
         getComments();
+        getApplicants();
         setRefreshing(true);
         wait(2000).then(() => setRefreshing(false));
     }, []);
@@ -68,11 +73,13 @@ const ViewJob = ({navigation, route}) =>{
     }
 
     const {data} = route.params;
+    const {userID} = route.params;
     console.log(data);
     const[user, setUser] = useState(null);
     const [foundComment, setFoundComment] = useState(false);
     const[comment, setComment] = useState([]);
     const[commentText, setCommentText] = useState('');
+    const [applicants, setApplicants] = useState([]);
     //getting the user to attach the userID to the creation of JOB
     const getUser = async ()=>{
         const userData = await _getUser();
@@ -156,10 +163,28 @@ const ViewJob = ({navigation, route}) =>{
         })
     }
 
+    const getApplicants = async() =>{
+        let body = {
+            "action" : "get_applicants",
+            "jobID": data.jobID
+        }
+
+        await axios.post(readApplicantsURL, body)
+        .then((response) => {
+            if(response.data.message=="success"){
+                setApplicants(response.data.data);
+            }
+        })
+        .catch((error) => {
+            Alert.alert("Error in getting Applicants " + error);
+        })
+    }
+
 
     useEffect(() => {
         getUser();
         getComments();
+        getApplicants();
     }, []);
 
     return (
@@ -205,6 +230,8 @@ const ViewJob = ({navigation, route}) =>{
                             <Text style={[styles.cardText,styles.grayText]}> {data.jobLocation} </Text>
                         </View>
                     </View>
+
+
                     <View style ={[globalStyles.card, styles.card]} >
                         <Text style = {{
                             fontFamily : 'Mont-Bold',
@@ -216,6 +243,45 @@ const ViewJob = ({navigation, route}) =>{
                             <Text style = {[styles.description, {fontFamily:'Inter-Regular', color:'#189AB4'}]}> {data.jobDescription}</Text>
                         </View>
                     </View>
+
+                    {
+                        //Only SHow  to the Creator
+                        (data.jobUserID == userID) &&
+                        <View style ={[globalStyles.card, styles.card, {height: 120}]} >
+                            <View style={styles.row}>
+                                <MaterialCommunityIcons name="briefcase-eye" size={24} color="black" />
+                                <Text style = {[styles.cardText]}> Applicants</Text>
+                            </View>
+                            {
+                                (applicants.length == 0) &&
+                                <Text>None at the moment</Text>
+                            }
+                            {
+                                applicants.map((item, index)=>{
+                                    return (
+                                        <View key={index}>
+                                            <TouchableOpacity
+                                                onPress={()=>{
+                                                    navigation.navigate('PublicProfile', {
+                                                        userID : item.userID,
+                                                        appUserID : userID,
+                                                    });
+                                                }}
+                                            >
+                                                <View style = {styles.row}>
+                                                    <FontAwesome name="user-circle" size={24} color="black" />
+                                                    <View style={{width: 10}}></View>
+                                                    <Text style = {styles.cardText}>
+                                                    {item.firstname} {item.lastname}
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )
+                                })
+                            }
+                        </View>
+                    }
 
                     <Text style = {[styles.text, {textTransform : 'none'}]}>Post an Inquiry</Text>
                     <View style ={[globalStyles.card, styles.card]} >

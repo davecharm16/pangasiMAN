@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, BackHandler, Text, View, StyleSheet, Button, TextInput, RefreshControl, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import { Alert, BackHandler, Text, View, StyleSheet, Button, TextInput, RefreshControl, TouchableOpacity, ScrollView, FlatList, ToastAndroid } from 'react-native';
 import JobCard from '../components/jobs_card';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { globalStyles } from '../styles/globalStyle';
@@ -10,6 +10,7 @@ import { _getUser } from '../storage_async/async_function';
 // console.log(host+directory+api.getJobsURL);
 // const getJobsURL = "http://192.168.100.54/pangasimanAPI/rest/api/readapi.php";
 const getJobsURL = host + directory + api.getJobsURL;
+const createAppliedURL = host + directory + api.createAppliedURL;
 
 const JobFeed = ({ navigation }) => {
   const wait = (timeout) => {
@@ -25,6 +26,33 @@ const JobFeed = ({ navigation }) => {
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
   }, []);
+
+  const showToast = (message) => {
+    ToastAndroid.show(message + ", Saved to the  Applied Jobs!", ToastAndroid.SHORT);
+  };
+
+  const applyJob = async (jobID, userID)=>{
+    let body = {
+      "action" : "create_applied",
+      "appliedJobsID": jobID,
+      "applicantUserID": user.userID
+    }
+
+    await axios.post(createAppliedURL, body)
+    .then((response) =>{
+      if(response.data.message == "Success") {
+        showToast(response.data.message);
+        getJobs(search);
+      }
+      else{
+        console.log(response.data.message);
+        ToastAndroid.show("Error, Try Again Later!", ToastAndroid.SHORT);
+      }
+    })
+    .catch((error) => {
+      Alert.alert("Network Error", error);
+    })
+  }
 
   const getJobs = async (searchWord) => {
     const userData = await _getUser();
@@ -109,7 +137,7 @@ const JobFeed = ({ navigation }) => {
           maxToRenderPerBatch={2}
           renderItem={({ item }) => {
             return (
-              <JobCard item={item} navigation={navigation} />
+              <JobCard item={item} navigation={navigation} apply = {applyJob} passedID = {user.userID} />
             )
           }}
           refreshControl={
