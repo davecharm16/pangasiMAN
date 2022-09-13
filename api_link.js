@@ -1,5 +1,5 @@
 //home 192.168.100.54
-export let host = "http://192.168.0.110/";
+export let host = "http://192.168.100.54/";
 export let directory= "pangasimanAPI/rest/api/";
 
 
@@ -29,4 +29,8 @@ export let api  = {
     readSkillsURL : "readapi.php",
     //Profile
     createSkillsURL : "createapi.php",
+    //Profile
+    deleteSkillsURL : "deleteapi.php",
+    //AppliedJob
+    readAppliedURL : "readapi.php",
 }

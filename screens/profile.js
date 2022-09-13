@@ -36,6 +36,7 @@ const Profile = (props) => {
     const readProfileURL = host + directory + api.readProfileURL;
     const readSkillsURL = host + directory + api.readSkillsURL;
     const createSkillsURL = host + directory + api.createSkillsURL;
+    const deleteSkillsURL = host + directory + api.deleteSkillsURL;
 
     const [user, setUser] = useState('');
     const [url, setUrl] = useState();
@@ -147,6 +148,25 @@ const Profile = (props) => {
                 setUrl(x);
             })
         }
+    }
+
+    const deleteSkill = async(id) =>{
+        let body = {
+            "action" : "delete_skill",
+            "id": id
+        }
+        await axios.post(deleteSkillsURL,body)
+        .then((response) =>{
+            if(response.data.message == 'success'){
+                getProfileData();
+            }
+            else{
+                Alert.alert(response.data);
+            }
+        })
+        .catch((error) => {
+            console.log("Error on Deleting Skill",error);
+        })
     }
 
 
@@ -303,7 +323,7 @@ const Profile = (props) => {
                         </TouchableOpacity>
                     </View>
                     <View style={[globalStyles.card, globalStyles.card_default]}>
-                        <View style={globalStyles.row}>
+                        <View style={[globalStyles.row, {flexWrap:'wrap', justifyContent:'flex-start'}]}>
                             {
                                 skills.map((item, index) => {
                                     return (
@@ -311,7 +331,9 @@ const Profile = (props) => {
                                             <Text style={styles.skillText}>
                                                 {item.skillname}
                                             </Text>
-                                            <TouchableOpacity>
+                                            <TouchableOpacity
+                                                onPress={()=>{deleteSkill(item.skillsID)}}
+                                            >
                                                 <Feather name="x-circle" size={18} color="white" />
                                             </TouchableOpacity>
                                         </View>
@@ -448,6 +470,7 @@ const styles = StyleSheet.create({
     },
     skillText: {
         fontFamily: 'Mont-Bold',
+        textTransform:'capitalize',
         marginRight: 5,
         color: '#fff'
     },

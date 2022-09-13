@@ -36,7 +36,7 @@ const ViewJob = ({navigation, route}) =>{
         getComments();
         setRefreshing(true);
         wait(2000).then(() => setRefreshing(false));
-      }, []);
+    }, []);
 
     const deleteAlert = (id) =>
     Alert.alert(
@@ -87,6 +87,7 @@ const ViewJob = ({navigation, route}) =>{
 
     //Submit the data through axios
     const getComments = async () => {
+        console.log(data.jobID);
         let body = {
             "action" : "get_comments",
             "jobID" : data.jobID
@@ -96,6 +97,7 @@ const ViewJob = ({navigation, route}) =>{
         .then((response) => {
             if(response.data.message=="success"){
                 setComment(response.data.data);
+                console.log(response.data.data);
                 setFoundComment(true);
             }
             else{
@@ -234,7 +236,7 @@ const ViewJob = ({navigation, route}) =>{
                     {!foundComment &&
                         <Text style = {styles.cardText}>No Inquiries Yet</Text>
                     }
-                    {comment.map((item, index) => {
+                    { foundComment && comment.map((item, index) => {
                             return (
                                 <View style ={[globalStyles.card,styles.card, {backgroundColor:'#fff', borderRadius: 4}]} key= {index} >
                                     <View style = {[styles.row,{justifyContent:"space-between"}]}>

@@ -20,6 +20,8 @@ initializeApp(fireBaseConfig);
 // import { ScrollView} from 'react-native-gesture-handler';
 
 const readProfileURL = host+directory+api.readProfileURL;
+const readSkillsURL = host + directory + api.readSkillsURL;
+
 
 
 const PublicProfile = ({navigation, route})=>{
@@ -38,9 +40,12 @@ const PublicProfile = ({navigation, route})=>{
     const {userID} = route.params;
     const {appUserID} = route.params;
 
+
     console.log(userID);
     const[user, setUser] = useState('');
     const [url, setUrl] = useState();
+    const [skills, setSkills] = useState([]);
+
 
 
     const getProfileData = async () => {
@@ -52,12 +57,31 @@ const PublicProfile = ({navigation, route})=>{
 
         await axios.post(readProfileURL, data)
         .then((response) => {
+            let result = response.data.data[0];
             setUser(response.data.data[0]);
             funct(response.data.data[0]);
+            getSkills(result.userID);
         })
         .catch((e)=>{
             console.log("Error on Getting Profile Data" + e);
         })
+    }
+
+    const getSkills = async (id) => {
+
+        let data = {
+            "action": "get_skills",
+            "userID": id
+        }
+
+        await axios.post(readSkillsURL, data)
+            .then((response) => {
+                setSkills(response.data.data);
+                console.log(response.data.data);
+            })
+            .catch((e) => {
+                console.log("Error on Getting Skills Data" + e);
+            })
     }
 
     const funct = async (hasProfile) => {
@@ -157,17 +181,23 @@ const PublicProfile = ({navigation, route})=>{
                 {/* hack */}
                 <Text style = {styles.text}>Skills</Text>
                 <View style = {[globalStyles.card, globalStyles.card_default]}>
-                    <View style = {globalStyles.row}>
-                        <View style={styles.skillContainer}>
-                            <Text style = {styles.skillText}>
-                                Cooking
-                            </Text>
-                        </View>
-                        <View style={styles.skillContainer}>
-                            <Text style = {styles.skillText}>
-                                Plumbing
-                            </Text>  
-                        </View>
+                    <View style = {[globalStyles.row, {flexWrap:'wrap', justifyContent:'flex-start'}]}>
+                        {
+                            (skills.length == 0) && 
+                            <Text style = {styles.textName}> No Skills Displayed</Text>
+                        }
+                        {
+                        skills.map((item, index) => {
+                                    return (
+                                        <View style={styles.skillContainer} key={index}>
+                                            <Text style={styles.skillText}>
+                                                {item.skillname}
+                                            </Text>
+                                        </View>
+                                    )
+                                }
+                            )
+                        }
                     </View>
                 </View>
 
@@ -290,13 +320,14 @@ const styles = StyleSheet.create({
     skillContainer : {
         flexDirection : 'row',
         backgroundColor : '#189AB4',
-        paddingHorizontal: 5,
+        paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius : 10,
         margin: 5,
     },
     skillText: {
         fontFamily : 'Mont-Bold',
+        textTransform : 'capitalize',
         marginRight : 5,
         color : '#fff'
     },  
