@@ -37,12 +37,15 @@ const Profile = (props) => {
     const readSkillsURL = host + directory + api.readSkillsURL;
     const createSkillsURL = host + directory + api.createSkillsURL;
     const deleteSkillsURL = host + directory + api.deleteSkillsURL;
+    const getReviewsURL = host + directory + api.getReviewsURL;
+
 
     const [user, setUser] = useState('');
     const [url, setUrl] = useState();
     const [skills, setSkills] = useState([]);
     const [skillCreate, setSkillCreate] = useState('');
     const [profileData, setProfileData] = useState(null);
+    const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -56,6 +59,27 @@ const Profile = (props) => {
     //         setUser('');
     //     }
     // }
+
+    //getreviews
+    const getReviews = async(userID) =>{
+        let body = {
+            "action" : "get_reviews",
+            "userID" : userID
+        }
+
+        axios.post(getReviewsURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                setReviews(response.data.data)
+            }
+            else{
+                setReviews([]);
+            }
+        })
+        .catch((error) => {
+            Alert.alert("NetWork Error: Error on Getting Reviews");
+        })
+    }
 
     const getSkills = async (id) => {
 
@@ -96,6 +120,7 @@ const Profile = (props) => {
                 setProfileData(response.data.data[0]);
                 funct(response.data.data[0]);
                 getSkills(result.userID);
+                getReviews(result.userID);
                 setLoading(false);
             })
             .catch((e) => {
@@ -360,51 +385,29 @@ const Profile = (props) => {
                         <ScrollView
                             nestedScrollEnabled={true}
                         >
-                            <View style={[globalStyles.card, globalStyles.card_default]}>
-                                <Text style={styles.textName}>
-                                    Walter O Brien
-                                </Text>
-                                <View style={globalStyles.row}>
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                </View>
-                                <Text>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                                </Text>
-                            </View>
-                            <View style={[globalStyles.card, globalStyles.card_default]}>
-                                <Text style={styles.textName}>
-                                    Tobias Curtis
-                                </Text>
-                                <View style={globalStyles.row}>
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                </View>
-                                <Text>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                                </Text>
-                            </View>
-                            <View style={[globalStyles.card, globalStyles.card_default]}>
-                                <Text style={styles.textName}>
-                                    Tobias Curtis
-                                </Text>
-                                <View style={globalStyles.row}>
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                </View>
-                                <Text>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                                </Text>
-                            </View>
+                        {
+                            (reviews.length > 0) ? 
+                            reviews.map((item, index)=>{
+                                return(
+                                    <View style = {[globalStyles.card, globalStyles.card_default]} key={index}>
+                                        <Text style={styles.textName}>
+                                            {item.firstname} {item.lastname}
+                                        </Text>
+                                        <View style = {globalStyles.row}>
+                                        {[...Array(parseInt(item.stars))].map((elementInArray, ind) => {
+                                            return(<FontAwesome name="star" size={14} color="#189AB4" key={ind}/>)
+                                            }
+                                        )}
+                                        </View>
+                                        <Text>
+                                            {item.review}
+                                        </Text>
+                                    </View>
+                                )
+                            })
+                            :
+                            <Text style= {styles.textName}> No Reviews Yet</Text>
+                        }
                         </ScrollView>
                     </View>
 
@@ -514,7 +517,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
     },
     reviewsContainer: {
-        height: 250,
+        maxHeight: 250,
     },
 
     //Modal Style

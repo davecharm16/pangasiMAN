@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import { Alert,Text, View, StyleSheet, Button, TouchableOpacity, ScrollView, Image, RefreshControl} from 'react-native';
+import { Alert,Text, View, StyleSheet, Button, TouchableOpacity, ScrollView, Image, RefreshControl, Modal, Pressable, TextInput, ToastAndroid} from 'react-native';
 import { _getUser } from '../storage_async/async_function';
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -14,6 +14,7 @@ import fireBaseConfig from '../fireBaseConfig';
 import { initializeApp } from 'firebase/app';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { api, host, directory } from '../api_link';
+import { Rating, AirbnbRating } from 'react-native-ratings';
 
 
 
@@ -22,6 +23,9 @@ initializeApp(fireBaseConfig);
 
 const readProfileURL = host+directory+api.readProfileURL;
 const readSkillsURL = host + directory + api.readSkillsURL;
+const getReviewsURL = host + directory + api.getReviewsURL;
+const createReviewsURL = host + directory + api.createReviewsURL;
+
 
 
 
@@ -47,7 +51,12 @@ const PublicProfile = ({navigation, route})=>{
 
     const[user, setUser] = useState('');
     const [url, setUrl] = useState();
+    const [rate, setRate] = useState(1);
+    const [review, setReview] = useState('');
     const [skills, setSkills] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [reviews, setReviews] = useState([]);
+
 
 
 
@@ -87,6 +96,59 @@ const PublicProfile = ({navigation, route})=>{
             })
     }
 
+    //createReview
+    const createReview = async (textReview) =>{
+        let body = {
+            "action" : "create_review",
+            "reviewUserID" : userID,
+            "giverUserID" : appUserID,
+            "stars" : rate,
+            "review" : textReview
+        }
+
+        if(textReview.length > 0) {
+            await axios.post(createReviewsURL, body)
+            .then((response) => {
+                if(response.data.message == "Success"){
+                    ToastAndroid.show("Review Submitted", ToastAndroid.SHORT);
+                    getReviews();
+                    setReview('');
+                }
+                else{
+                    ToastAndroid.show("An Error Occured", ToastAndroid.SHORT);
+                }
+            })
+            .catch((e)=>{
+                Alert.alert("Network Error", "Error on Submitting Review");
+            })
+        }
+        else{
+            ToastAndroid.show("Review Must not Be Empty", ToastAndroid.SHORT);
+        }
+    }
+
+    //getreviews
+    const getReviews = async() =>{
+        let body = {
+            "action" : "get_reviews",
+            "userID" : userID
+        }
+
+        axios.post(getReviewsURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                setReviews(response.data.data)
+            }
+            else{
+                setReviews([]);
+            }
+        })
+        .catch((error) => {
+            Alert.alert("NetWork Error: Error on Getting Reviews");
+        })
+    }
+
+
     const funct = async (hasProfile) => {
         if(hasProfile.hasProfile != "0"){
             const storage = getStorage();
@@ -113,6 +175,7 @@ const PublicProfile = ({navigation, route})=>{
     useEffect(() => {
         // getUser();
         getProfileData();
+        getReviews();
     }, []);
 
     return (
@@ -127,6 +190,52 @@ const PublicProfile = ({navigation, route})=>{
                     />
                 }
             >
+                <View style={styles.centeredView}>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={modalVisible}
+                            onRequestClose={() => {
+                                Alert.alert("Modal has been closed.");
+                                setModalVisible(!modalVisible);
+                            }}
+                        >
+                            <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                    <Text style={[styles.text,styles.modalText]}>Give Review</Text>
+                                    <Rating
+                                        startingValue={rate}
+                                        minValue={1}
+                                        showRating
+                                        onFinishRating={(count)=>{setRate(count)}}
+                                        style={{ paddingVertical: 10 }}
+                                    />
+                                    <TextInput style={{borderBottomColor: '#189AB4' ,borderBottomWidth:1, paddingHorizontal:5, paddingVertical:2,width:200
+                                    }}
+                                    onChangeText = {(val) => {setReview(val)}}
+                                    value= {review}
+                                    multiline = {true}
+                                    placeholder='Review' placeholderTextColor='#189AB4'/>
+                                    <View style = {globalStyles.row}>
+                                        <Pressable
+                                            style={[styles.button, styles.buttonClose]}
+                                            onPress={() => setModalVisible(!modalVisible)}
+                                        >
+                                            <Text style={styles.textStyle}>Cancel</Text>
+                                        </Pressable>
+                                        <Pressable
+                                            style={[styles.button, styles.buttonOpen]}
+                                            onPress={() => {createReview(review)}}
+                                        >
+                                            <Text style={styles.textStyle}>Rate</Text>
+                                        </Pressable>
+                                        
+                                    </View>
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
+                    
                 <Text style = {styles.text}>Personal Information</Text>
                 <View style = {[globalStyles.card, globalStyles.card_default]}>
                     <View style={styles.innerContainer}>
@@ -212,6 +321,7 @@ const PublicProfile = ({navigation, route})=>{
                         { (appUserID != userID) &&
                         <TouchableOpacity
                             onPress={ ()=>{
+                                setModalVisible(true)
                                 console.log('Give Review');
                             }}
                         >
@@ -223,51 +333,29 @@ const PublicProfile = ({navigation, route})=>{
                     <ScrollView 
                     nestedScrollEnabled = {true}
                     >
-                        <View style = {[globalStyles.card, globalStyles.card_default]}>
-                            <Text style={styles.textName}>
-                                Walter O Brien
-                            </Text>
-                            <View style = {globalStyles.row}>
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                            </View>
-                            <Text>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                            </Text>
-                        </View>
-                        <View style = {[globalStyles.card, globalStyles.card_default]}>
-                            <Text style={styles.textName}>
-                                Tobias Curtis
-                            </Text>
-                            <View style = {globalStyles.row}>
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                            </View>
-                            <Text>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                            </Text>
-                        </View>
-                        <View style = {[globalStyles.card, globalStyles.card_default]}>
-                            <Text style={styles.textName}>
-                                Tobias Curtis
-                            </Text>
-                            <View style = {globalStyles.row}>
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                                <FontAwesome name="star" size={14} color="#189AB4" />
-                            </View>
-                            <Text>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                            </Text>
-                        </View>
+                        {
+                            (reviews.length > 0) ? 
+                            reviews.map((item, index)=>{
+                                return(
+                                    <View style = {[globalStyles.card, globalStyles.card_default]} key={index}>
+                                        <Text style={styles.textName}>
+                                            {item.firstname} {item.lastname}
+                                        </Text>
+                                        <View style = {globalStyles.row}>
+                                        {[...Array(parseInt(item.stars))].map((elementInArray, ind) => {
+                                            return(<FontAwesome name="star" size={14} color="#189AB4" key={ind}/>)
+                                            }
+                                        )}
+                                        </View>
+                                        <Text>
+                                            {item.review}
+                                        </Text>
+                                    </View>
+                                )
+                            })
+                            :
+                            <Text style= {styles.textName}> No Reviews Yet</Text>
+                        }
                     </ScrollView>
                 </View>
 
@@ -359,6 +447,7 @@ const styles = StyleSheet.create({
     },
     textName : {
         fontFamily : 'Mont-Bold',
+        textTransform:'capitalize',
         fontSize : 14,
         marginVertical: 5,
     },
@@ -374,7 +463,54 @@ const styles = StyleSheet.create({
         alignSelf : 'flex-end',
     },
     reviewsContainer : {
-        height : 250,
+        maxHeight : 250,
+    },
+
+        //Modal Style
+
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalView: {
+        margin: 10,
+        width: '80%',
+        backgroundColor: "white",
+        borderRadius: 10,
+        padding: 10,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    button: {
+        borderRadius: 10,
+        paddingVertical:5,
+        paddingHorizontal: 10,
+        elevation: 2,
+        marginVertical : 10,
+        marginHorizontal : 5,
+    },
+    buttonOpen: {
+        backgroundColor: "#189AB4",
+    },
+    buttonClose: {
+        backgroundColor: "#ed5e68",
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center"
     }
 });
 
