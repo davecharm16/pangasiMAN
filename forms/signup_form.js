@@ -6,6 +6,8 @@ import CustomButton from '../styles/customButton';
 import * as yup from 'yup';
 import moment from 'moment';
 import axios from 'axios'
+import { api, host, directory } from '../api_link';
+
 // import { create } from 'yup/lib/Reference';
 // import DatePicker from 'react-native-date-picker'
 // import DateTimePicker from '@react-native-community/datetimepicker';
@@ -70,8 +72,10 @@ const signInValidationSchema = yup.object().shape({
 
 const SignUpForm =({navigation})=>{
 
-    const createUserURL = "http://192.168.100.54/pangasimanAPI/rest/api/createuser.php";
-    const createAddressURL = "http://192.168.100.54/pangasimanAPI/rest/api/createaddress.php";
+    // const createUserURL = "http://192.168.100.54/pangasimanAPI/rest/api/createuser.php";
+    const createUserURL = host+directory+api.createUserURL;
+    // const createAddressURL = "http://192.168.100.54/pangasimanAPI/rest/api/createaddress.php";
+    const createAddressURL = host+directory+api.createAddressURL;
 
     const createAddress = async (values, id) =>{
         const data = {

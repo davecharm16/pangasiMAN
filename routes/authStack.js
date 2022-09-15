@@ -10,6 +10,8 @@ import { _getSignedIn, _setLogOut } from '../storage_async/async_function';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PublicProfile from '../screens/public _profile';
 import EditProfile from '../screens/editprofile';
+import ViewJob from '../screens/viewjob';
+import EditJob from '../screens/edit_job';
 
 const Stack = createNativeStackNavigator();
 
@@ -96,7 +98,35 @@ function Navigation() {
               options={{ headerShown: false }}
             />
             <Stack.Screen name="PublicProfile" component={PublicProfile} options={{headerShown: false, headerTitle: "Profile"}} />
-            <Stack.Screen name="EditProfile" component={EditProfile} options={{headerShown: false, headerTitle: "Edit"}} />
+            <Stack.Screen name="EditProfile" component={EditProfile} options={
+                { headerShown: true,
+                  headerTitle: "Edit Profile", 
+                  headerTintColor : '#fff',
+                  headerStyle: {
+                  backgroundColor: '#05445E',
+                  }
+                }
+              } />
+            <Stack.Screen name="ViewJob" component={ViewJob} 
+            options={
+              { headerShown: true,
+                headerTintColor : '#fff', 
+                headerTitle: "",
+                headerStyle: {
+                backgroundColor: '#05445E',
+                }
+              } 
+            } />
+            <Stack.Screen name="EditJob" component={EditJob} 
+            options={
+              { headerShown: true,
+                headerTintColor : '#fff', 
+                headerTitle: "",
+                headerStyle: {
+                backgroundColor: '#05445E',
+                }
+              } 
+            } />
           </>
           ) : (
             <>

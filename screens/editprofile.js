@@ -5,12 +5,15 @@ import fireBaseConfig from '../fireBaseConfig';
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
 import axios from 'axios';
+import { api, host, directory } from '../api_link';
 
 initializeApp(fireBaseConfig);
 
 
 const EditProfile = ({route, navigation}) => {
-    const updateURL = "http://192.168.100.54/pangasimanAPI/rest/api/updateapi.php";
+    // const updateURL = "http://192.168.100.54/pangasimanAPI/rest/api/updateapi.php";
+    console.log(host+directory+api.updateURL);
+    const updateURL = host+directory+api.updateURL;
     const {data} = route.params;
     const [image, setImage] = useState('');
 

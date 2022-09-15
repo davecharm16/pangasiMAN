@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import { Alert,Text, View, StyleSheet, Button, TouchableOpacity, ScrollView} from 'react-native';
+import { Alert,Text, View, StyleSheet, Button, TouchableOpacity, ScrollView, Image, RefreshControl} from 'react-native';
 import { _getUser } from '../storage_async/async_function';
 import { globalStyles } from '../styles/globalStyle';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,52 +9,147 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import axios from 'axios';
+import fireBaseConfig from '../fireBaseConfig';
+import { initializeApp } from 'firebase/app';
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+import { api, host, directory } from '../api_link';
+
+
+initializeApp(fireBaseConfig);
 // import { ScrollView} from 'react-native-gesture-handler';
 
+const readProfileURL = host+directory+api.readProfileURL;
+const readSkillsURL = host + directory + api.readSkillsURL;
 
-const PublicProfile = ()=>{
 
-    // const[user, setUser] = useState('');
 
-    // const getUser = async ()=>{
-    //     const userData = await _getUser();
-    //     if( userData !== null){
-    //         setUser(userData);
-    //     }
-    //     else{
-    //         console.log('no user')
-    //         setUser('');
-    //     }
-    // }
+const PublicProfile = ({navigation, route})=>{
 
-    // useEffect(() => {
-    //     getUser();
-    // }, []);
+    const wait = (timeout) => {
+        return new Promise(resolve => setTimeout(resolve, timeout));
+    }
+    const [refreshing, setRefreshing] = React.useState(false);
+    const onRefresh = React.useCallback(() => {
+        // console.log(search);
+        getProfileData();
+        setRefreshing(true);
+        wait(2000).then(() => setRefreshing(false));
+      }, []);
+
+    const {userID} = route.params;
+    const {appUserID} = route.params;
+
+
+    console.log(userID);
+    const[user, setUser] = useState('');
+    const [url, setUrl] = useState();
+    const [skills, setSkills] = useState([]);
+
+
+
+    const getProfileData = async () => {
+
+        let data = {
+            "action" : "get_profile",
+            "userID" : userID
+        }
+
+        await axios.post(readProfileURL, data)
+        .then((response) => {
+            let result = response.data.data[0];
+            setUser(response.data.data[0]);
+            funct(response.data.data[0]);
+            getSkills(result.userID);
+        })
+        .catch((e)=>{
+            console.log("Error on Getting Profile Data" + e);
+        })
+    }
+
+    const getSkills = async (id) => {
+
+        let data = {
+            "action": "get_skills",
+            "userID": id
+        }
+
+        await axios.post(readSkillsURL, data)
+            .then((response) => {
+                setSkills(response.data.data);
+                console.log(response.data.data);
+            })
+            .catch((e) => {
+                console.log("Error on Getting Skills Data" + e);
+            })
+    }
+
+    const funct = async (hasProfile) => {
+        if(hasProfile.hasProfile != "0"){
+            const storage = getStorage();
+            const imageName = '/'+hasProfile.firstname+hasProfile.userID + 'images.jpg';
+            console.log(imageName);
+            const reference = ref(storage, imageName);
+            await getDownloadURL(reference).then((x) => {
+                console.log(x);
+                setUrl(x);
+            })
+        }
+        else{
+            const storage = getStorage();
+            const imageName = '/images.jpg';
+            console.log(imageName);
+            const reference = ref(storage, imageName);
+            await getDownloadURL(reference).then((x) => {
+                console.log(x);
+                setUrl(x);
+            })
+        }
+    }
+
+    useEffect(() => {
+        // getUser();
+        getProfileData();
+    }, []);
 
     return (
         <View style = {styles.container }>
             <ScrollView  
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled = {true}
+                refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                }
             >
                 <Text style = {styles.text}>Personal Information</Text>
                 <View style = {[globalStyles.card, globalStyles.card_default]}>
                     <View style={styles.innerContainer}>
                         <View style = {styles.image_profile}>
-
+                            <Image 
+                                    style = 
+                                    {{
+                                    width: '100%',
+                                    height: '100%',
+                                    borderRadius : 100,
+                                    }} 
+                                    source = {{uri:url}}
+                                />
                         </View>
                         <View style = {styles.textContainer}>
-                            <Text style = {styles.textName}>Test Name</Text>
+                            <Text style = {styles.textName}>{user.firstname} {user.lastname}</Text>
                             <View style = {globalStyles.row}>
                                 <FontAwesome5 name="user" size={18} color="#5B5B5B" />
                                 <Text style = {styles.regText}>
-                                  18 years old,  Male
-                                </Text>  
+                                  {user.age} years old,  {user.sex}
+                                </Text>
                             </View>
                             <View style = {globalStyles.row}>
                                 <SimpleLineIcons name="location-pin" size={18} color="#5B5B5B" />
                                 <Text style = {styles.regText}>
-                                    #452 Talospatang, Malasiqui, Pangasinan
+                                {user.houseNo} {user.street} {user.baranggay}, {user.municipality} {user.province}
                                 </Text>  
                             </View>
                         </View>
@@ -70,13 +165,13 @@ const PublicProfile = ()=>{
                     <View style = {globalStyles.row}>
                         <AntDesign name="phone" size={18} color="#5B5B5B" />
                         <Text style = {styles.regText}>
-                            09151869987
+                            {user.contact_no}
                         </Text>  
                     </View>
                     <View style = {globalStyles.row}>
                         <MaterialCommunityIcons name="email-outline" size={18} color="#5B5B5B" />
                         <Text style = {styles.regText}>
-                            dcbb@gmail.com
+                            {user.email}
                         </Text>  
                     </View>
                 </View>
@@ -86,17 +181,23 @@ const PublicProfile = ()=>{
                 {/* hack */}
                 <Text style = {styles.text}>Skills</Text>
                 <View style = {[globalStyles.card, globalStyles.card_default]}>
-                    <View style = {globalStyles.row}>
-                        <View style={styles.skillContainer}>
-                            <Text style = {styles.skillText}>
-                                Cooking
-                            </Text>
-                        </View>
-                        <View style={styles.skillContainer}>
-                            <Text style = {styles.skillText}>
-                                Plumbing
-                            </Text>  
-                        </View>
+                    <View style = {[globalStyles.row, {flexWrap:'wrap', justifyContent:'flex-start'}]}>
+                        {
+                            (skills.length == 0) && 
+                            <Text style = {styles.textName}> No Skills Displayed</Text>
+                        }
+                        {
+                        skills.map((item, index) => {
+                                    return (
+                                        <View style={styles.skillContainer} key={index}>
+                                            <Text style={styles.skillText}>
+                                                {item.skillname}
+                                            </Text>
+                                        </View>
+                                    )
+                                }
+                            )
+                        }
                     </View>
                 </View>
 
@@ -105,6 +206,7 @@ const PublicProfile = ()=>{
                 {/* hack */}
                 <View style = {{flexDirection :'row', justifyContent: 'space-between'}}>
                         <Text style = {styles.text}>Service Reviews</Text>
+                        { (appUserID != userID) &&
                         <TouchableOpacity
                             onPress={ ()=>{
                                 console.log('Give Review');
@@ -112,6 +214,7 @@ const PublicProfile = ()=>{
                         >
                             <FontAwesome5 name="plus" size={24} color="#189AB4" />
                         </TouchableOpacity>
+                        }
                     </View>
                 <View style={styles.reviewsContainer}>
                     <ScrollView 
@@ -217,13 +320,14 @@ const styles = StyleSheet.create({
     skillContainer : {
         flexDirection : 'row',
         backgroundColor : '#189AB4',
-        paddingHorizontal: 5,
+        paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius : 10,
         margin: 5,
     },
     skillText: {
         fontFamily : 'Mont-Bold',
+        textTransform : 'capitalize',
         marginRight : 5,
         color : '#fff'
     },  

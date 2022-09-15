@@ -10,6 +10,7 @@ import JobFeed from '../screens/jobfeed';
 import Profile from '../screens/profile';
 import { _setUser } from '../storage_async/async_function';
 import CreateJob from '../screens/createjob';
+import AppliedJobs from '../screens/view_applied';
 
 // function Feed() {
 //   return (
@@ -82,6 +83,14 @@ function MyDrawer(props) {
             backgroundColor: '#05445E',
           },
           headerTitle: "Create Job",
+        }}
+      />
+      <Drawer.Screen name="Applied Jobs" component={AppliedJobs} options = {{
+          headerTintColor : '#fff',
+          headerStyle: {
+            backgroundColor: '#05445E',
+          },
+          headerTitle: "Applied Jobs",
         }}
       />
       {/* Create create job offer Screen */}

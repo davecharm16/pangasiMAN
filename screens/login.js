@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, Touchable, TouchableWithoutFeedback, View, Keyboard} from 'react-native';
+import { StyleSheet, Text, Touchable, TouchableWithoutFeedback, View, Keyboard, Image} from 'react-native';
 import LoginForm from '../forms/login_form';
 import CustomButton from '../styles/customButton';
 import { globalStyles } from '../styles/globalStyle';
 
 
 const Login = ({ navigation, onLog })=>{
-
 
     function onPressSignUp() {
         navigation.navigate('Signup');
@@ -19,11 +18,12 @@ const Login = ({ navigation, onLog })=>{
         }>
             <View style = {[globalStyles.container, styles.loginContainer]}>
                 <View>
+                    <Image source={require('../assets/image_assets/images.jpg')} style={{width:100, height:100, alignSelf:'center'}}/>
                     <Text style = {{fontFamily : 'Inter-Bold', fontSize : 40, color : '#fff'}}>
                         {/* TODO: to be replaced by LOGO- Change Style to Image */}
                         PangasiMAN
                     </Text>
-                    <Text style = {styles.h_text}> The Man for the Job</Text>
+                    <Text style = {styles.h_text}> The MAN for the Job</Text>
                 </View>
                 <View style={styles.formContainer}>
                     {/* TODO : Forms Login  */}
