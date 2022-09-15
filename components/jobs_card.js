@@ -45,7 +45,7 @@ const JobCard = ({item, navigation, apply, passedID}) => {
                     });
                 }}>
                 {
-                        (id == item.jobUserID) &&
+                        (passedID == item.jobUserID) &&
                         // <View style = {[styles.styleBtn, {padding:5}]}>
                         //     <Text style = {styles.btnText}>YOURS</Text>
                         // </View>
@@ -94,7 +94,7 @@ const JobCard = ({item, navigation, apply, passedID}) => {
                         </View>
                     </TouchableOpacity>
                     {
-                        (id != item.jobUserID) &&
+                        (passedID != item.jobUserID) &&
                         <CustomButton onPress={()=>{
                             apply(
                                 item.jobID,

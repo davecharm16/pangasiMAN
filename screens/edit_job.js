@@ -27,50 +27,48 @@ const createJobSchema = yup.object().shape({
     .required('Job Description is Required'),
 })
 
-// const createURL = 'http://192.168.100.54/pangasimanAPI/rest/api/createjob.php';
-const createURL = host+directory+api.createURL;
 
-const CreateJob = () =>{
+const editJobURL = host+directory+api.editJobURL;
 
-    const[user, setUser] = useState(null);
-    //getting the user to attach the userID to the creation of JOB
-    const getUser = async ()=>{
-        const userData = await _getUser();
-        if( userData !== null){
-            setUser(userData);
-        }
-        else{
-            console.log('no user')
-            setUser(null);
-        }
-    }
 
+const EditJob = ({navigation, route}) =>{
+
+    const {jobData} = route.params;
+    const {userID} = route.params;
+    const {callBack} = route.params;
+
+    console.log('job data passed');
+    console.log(jobData, userID);
     //Submit the data through axios
-    const createJob = async (values, id) => {
-        let data = {
-            "jobTitle": values.jobTitle,
-            "jobPay": values.jobPay,
-            "jobLocation": values.jobLocation,
-            "jobDescription": values.jobDescription,
-            "jobUserID": id
+
+    const updateJob = async(values, actions) =>{
+        let body = {
+            "action" : "update_job",
+            "jobTitle" : values.jobTitle,
+            "jobPay" : values.jobPay,
+            "jobLocation" : values.jobLocation,
+            "jobDescription" : values.jobDescription,
+            "jobID" : jobData.jobID
         }
 
-        await axios.post(createURL, data)
-        .then((response) => {
-            let resp = response.data.description;
-            Alert.alert(resp);
-            console.log(response.data);
+        await axios.post(editJobURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                Alert.alert(response.data.message);
+                let res = {...jobData, jobTitle: values.jobTitle, jobPay: values.jobPay, jobLocation:values.jobLocation, jobDescription:values.jobDescription};
+                callBack(res);
+            }   
+            else{
+                actions.resetForm();
+            }
         })
-        .catch((e)=> {
-            console.log("errors " + e );
-            Alert.alert("errors" + e);
+        .catch((error) => {
+            Alert.alert("Network Error, Error Updating");
+            actions.resetForm();
         })
-
     }
-
 
     useEffect(() => {
-        getUser();
     }, []);
 
     return (
@@ -80,24 +78,22 @@ const CreateJob = () =>{
                     validationSchema={createJobSchema}
                     initialValues={
                         {
-                            jobTitle : '',
-                            jobPay : '',
-                            jobLocation : '',
-                            jobDescription : '',
+                            jobTitle : jobData.jobTitle,
+                            jobPay : jobData.jobPay,
+                            jobLocation : jobData.jobLocation,
+                            jobDescription : jobData.jobDescription,
                         }
                     }
                     onSubmit={(values, actions)=>{
-                            if(user != null){
-                                createJob(values, user.userID);
-                            }
-                            actions.resetForm();
+                            updateJob(values, actions);
+                            // actions.resetForm();
                         }
                     }
                 >
                 {
                     (props) => (
                     <View style = {styles.cardContainer}>
-                        <Text style = {styles.text}>Create New Job Offer</Text>
+                        <Text style = {styles.text}>Edit your Job Offer</Text>
                         <View style ={[globalStyles.card, styles.card]} >
                             <View style={styles.row}>
                                 <Octicons name="briefcase" size={24} color="black" />
@@ -156,7 +152,7 @@ const CreateJob = () =>{
                             }
                         </View>
                         <View style = {styles.btnContainer}>
-                            <Button title="CREATE" color='#189AB4' onPress={props.handleSubmit}/>
+                            <Button title="Update" color='#189AB4' onPress={props.handleSubmit}/>
                         </View>
                     </View>
                     )
@@ -255,4 +251,4 @@ const styles = StyleSheet.create({
         flexDirection : 'column',
     },
 });
-export default CreateJob;
+export default EditJob;

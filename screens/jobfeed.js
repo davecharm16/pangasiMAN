@@ -18,7 +18,7 @@ const JobFeed = ({ navigation }) => {
   }
   const [refreshing, setRefreshing] = React.useState(false);
   const [search, setSearch] = useState('');
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
   const [found, setFound] = useState(false);
   const onRefresh = React.useCallback(() => {
     console.log(search);
@@ -61,7 +61,7 @@ const JobFeed = ({ navigation }) => {
     }
     else {
       console.log('no user')
-      setUser('');
+      setUser({});
     }
 
     let data_actions = {
@@ -89,6 +89,13 @@ const JobFeed = ({ navigation }) => {
 
   useEffect(() => {
     getJobs(search);
+
+    const unsubscribe = navigation.addListener('focus', () => {
+      getJobs(search);
+    });
+
+  // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
   }, [])
 
 

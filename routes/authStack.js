@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PublicProfile from '../screens/public _profile';
 import EditProfile from '../screens/editprofile';
 import ViewJob from '../screens/viewjob';
+import EditJob from '../screens/edit_job';
 
 const Stack = createNativeStackNavigator();
 
@@ -107,6 +108,16 @@ function Navigation() {
                 }
               } />
             <Stack.Screen name="ViewJob" component={ViewJob} 
+            options={
+              { headerShown: true,
+                headerTintColor : '#fff', 
+                headerTitle: "",
+                headerStyle: {
+                backgroundColor: '#05445E',
+                }
+              } 
+            } />
+            <Stack.Screen name="EditJob" component={EditJob} 
             options={
               { headerShown: true,
                 headerTintColor : '#fff', 

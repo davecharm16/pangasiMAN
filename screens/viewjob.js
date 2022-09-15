@@ -72,7 +72,8 @@ const ViewJob = ({navigation, route}) =>{
         return moment(time).fromNow();
     }
 
-    const {data} = route.params;
+    const [data, setData] = useState(route.params.data);
+    // const {data} = route.params;
     const {userID} = route.params;
     console.log(data);
     const[user, setUser] = useState(null);
@@ -90,6 +91,10 @@ const ViewJob = ({navigation, route}) =>{
             console.log('no user')
             setUser(null);
         }
+    }
+
+    const callBackData = (data)=>{
+        setData(data);
     }
 
     //Submit the data through axios
@@ -213,6 +218,13 @@ const ViewJob = ({navigation, route}) =>{
                             <FontAwesome5 name="business-time" size={24} color="black" />
                             <Text style={[styles.cardTextRegular, {fontSize:14}]}>  Posted {timePosted(data.created_at)}</Text>
                         </View>
+                        <View style = {styles.row}>
+                            <Text style = {{
+                            fontFamily : 'Mont-Bold',
+                            fontSize : 14,
+                             }}>Status</Text>
+                            <Text style={[styles.cardText, {fontSize:14, color:'#189AB4'}]}> {(data.status == "0" )? " Open" : " Done"}</Text>
+                        </View>
                     </View>
                     <View style ={[globalStyles.card, styles.card]} >
                         <View style={styles.row}>
@@ -245,13 +257,17 @@ const ViewJob = ({navigation, route}) =>{
                     </View>
 
                     {
-                        //Only SHow  to the Creator
+                        //Only Show  to the Creator
                         (data.jobUserID == userID) &&
                         <View style ={[globalStyles.card, styles.card, {height: 120}]} >
                             <View style={styles.row}>
                                 <MaterialCommunityIcons name="briefcase-eye" size={24} color="black" />
-                                <Text style = {[styles.cardText]}> Applicants</Text>
+                                <Text style = {[styles.cardText]}> Applicants {(applicants.length != 0) ? ": " + applicants.length : "" }</Text>
                             </View>
+                            <View style={{flex:1}}>
+                                <ScrollView
+                                    nestedScrollEnabled = {true}
+                                >
                             {
                                 (applicants.length == 0) &&
                                 <Text>None at the moment</Text>
@@ -280,9 +296,30 @@ const ViewJob = ({navigation, route}) =>{
                                     )
                                 })
                             }
+                                </ScrollView>
+                            </View>
                         </View>
                     }
-
+                    {
+                    (data.jobUserID == userID) &&
+                    <View style ={[globalStyles.card, styles.card]} >
+                        <View style={[globalStyles.row, {justifyContent: 'space-between'}]}>
+                            <Button title="Edit" color={''}
+                                    onPress = {()=>{
+                                        navigation.navigate('EditJob',
+                                            {
+                                                jobData : data,
+                                                userID : userID,
+                                                callBack : callBackData
+                                            }
+                                        )
+                                    }}
+                            />
+                            <Button title="Mark Done" color={"#189AB4"}/>
+                            {/* <Button title="Delete" color={'#ed5e68'}/> */}
+                        </View>
+                    </View>
+                    }
                     <Text style = {[styles.text, {textTransform : 'none'}]}>Post an Inquiry</Text>
                     <View style ={[globalStyles.card, styles.card]} >
                         <TextInput placeholder="Comment" multiline={true}

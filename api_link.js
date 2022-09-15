@@ -38,5 +38,7 @@ export let api  = {
     //AppliedJob - DELETE 
     deleteAppliedURL : "deleteapi.php",
     //ViewJobs - Read Applicants
-    readApplicantsURL : "readapi.php"
+    readApplicantsURL : "readapi.php",
+    //EditJobs
+    editJobURL : "updateapi.php"
 }
