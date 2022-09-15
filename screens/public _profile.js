@@ -16,6 +16,7 @@ import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { api, host, directory } from '../api_link';
 
 
+
 initializeApp(fireBaseConfig);
 // import { ScrollView} from 'react-native-gesture-handler';
 
@@ -42,6 +43,8 @@ const PublicProfile = ({navigation, route})=>{
 
 
     console.log(userID);
+    console.log(appUserID);
+
     const[user, setUser] = useState('');
     const [url, setUrl] = useState();
     const [skills, setSkills] = useState([]);
