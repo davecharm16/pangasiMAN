@@ -97,7 +97,15 @@ function Navigation() {
               component={DrawerScreenMain}
               options={{ headerShown: false }}
             />
-            <Stack.Screen name="PublicProfile" component={PublicProfile} options={{headerShown: false, headerTitle: "Profile"}} />
+            <Stack.Screen name="PublicProfile" component={PublicProfile} options={
+                { headerShown: true,
+                  headerTitle: "Public Profile", 
+                  headerTintColor : '#fff',
+                  headerStyle: {
+                  backgroundColor: '#05445E',
+                  }
+                }
+              } />
             <Stack.Screen name="EditProfile" component={EditProfile} options={
                 { headerShown: true,
                   headerTitle: "Edit Profile", 

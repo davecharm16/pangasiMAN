@@ -38,6 +38,8 @@ const Profile = (props) => {
     const createSkillsURL = host + directory + api.createSkillsURL;
     const deleteSkillsURL = host + directory + api.deleteSkillsURL;
     const getReviewsURL = host + directory + api.getReviewsURL;
+    const getJobOfferedURL = host + directory + api.getJobOfferedURL;
+
 
 
     const [user, setUser] = useState('');
@@ -47,6 +49,7 @@ const Profile = (props) => {
     const [profileData, setProfileData] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [jobOffered, setJobOffered] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
 
     // const getUser = async ()=>{
@@ -59,6 +62,25 @@ const Profile = (props) => {
     //         setUser('');
     //     }
     // }
+    //
+    const getJobOffered = async(userID) =>{
+        let body = {
+            "action" : "get_job_offered",
+            "userID" : userID
+        }
+        axios.post(getJobOfferedURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                setJobOffered(response.data.data)
+            }
+            else{
+                setJobOffered([]);
+            }
+        })
+        .catch((error) => {
+            Alert.alert("NetWork Error: Error on Getting JobOffered");
+        })
+    }
 
     //getreviews
     const getReviews = async(userID) =>{
@@ -121,6 +143,7 @@ const Profile = (props) => {
                 funct(response.data.data[0]);
                 getSkills(result.userID);
                 getReviews(result.userID);
+                getJobOffered(result.userID);
                 setLoading(false);
             })
             .catch((e) => {
@@ -420,32 +443,52 @@ const Profile = (props) => {
                         <ScrollView
                             nestedScrollEnabled={true}
                         >
-                            <View style={[globalStyles.card, globalStyles.card_default]}>
-                                <Text style={styles.textName}>
-                                    Home Cleaning Service
-                                </Text>
-                                <View style={globalStyles.row}>
-                                    <MaterialIcons name="attach-money" size={18} color="#5B5B5B" />
-                                    <Text>
-                                        500 Php
-                                    </Text>
-                                </View>
-                                <View style={globalStyles.row}>
-                                    <MaterialIcons name="location-pin" size={18} color="#5B5B5B" />
-                                    <Text>
-                                        Dagupan City, Pangasinan
-                                    </Text>
-                                </View>
-                                <Text style={styles.textName}>
-                                    Description
-                                </Text>
-                                <Text>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                                </Text>
-                                <View style={styles.edit}>
-                                    <Button color='#189AB4' title='View' />
-                                </View>
-                            </View>
+                        {
+                            (jobOffered.length == 0) && 
+                            <Text style = {styles.textName}> No Jobs Offered</Text>
+                        }
+                        {
+                        jobOffered.map((item, index) => {
+                                    return (
+                                    <View style = {[globalStyles.card, globalStyles.card_default]} key={index}>
+                                        <Text style={styles.textName}>
+                                            {item.jobTitle}
+                                        </Text>
+                                        <View style = {globalStyles.row}>
+                                            <MaterialIcons name="attach-money" size={18} color="#5B5B5B" />
+                                            <Text>
+                                                {item.jobPay} Php
+                                            </Text>
+                                        </View>
+                                        <View style = {globalStyles.row}>
+                                            <MaterialIcons name="location-pin" size={18} color="#5B5B5B" />
+                                            <Text>
+                                                {item.jobLocation}
+                                            </Text>
+                                        </View>
+                                        <Text style={styles.textName}>
+                                            Description
+                                        </Text>
+                                        <Text>
+                                            {item.jobDescription}
+                                        </Text>
+                                        <View style = {styles.edit}>
+                                            <Button color='#189AB4' title='View' onPress={
+                                                ()=>{
+                                                    props.navigation.navigate('ViewJob', {
+                                                        data : item,
+                                                        userID : profileData.userID
+                                                    });
+                                                }
+                                            }/>
+                                            <View style={{width:10}}></View>
+                                            <Button color='#ed5e68' title='Delete' />
+                                        </View>
+                                    </View>
+                                    )
+                                }
+                            )
+                        }
                         </ScrollView>
                     </View>
 

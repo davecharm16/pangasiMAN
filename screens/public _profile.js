@@ -25,6 +25,8 @@ const readProfileURL = host+directory+api.readProfileURL;
 const readSkillsURL = host + directory + api.readSkillsURL;
 const getReviewsURL = host + directory + api.getReviewsURL;
 const createReviewsURL = host + directory + api.createReviewsURL;
+const getJobOfferedURL = host + directory + api.getJobOfferedURL;
+
 
 
 
@@ -38,6 +40,8 @@ const PublicProfile = ({navigation, route})=>{
     const onRefresh = React.useCallback(() => {
         // console.log(search);
         getProfileData();
+        getReviews();
+        getJobOffered();
         setRefreshing(true);
         wait(2000).then(() => setRefreshing(false));
       }, []);
@@ -49,13 +53,14 @@ const PublicProfile = ({navigation, route})=>{
     console.log(userID);
     console.log(appUserID);
 
-    const[user, setUser] = useState('');
+    const [user, setUser] = useState('');
     const [url, setUrl] = useState();
     const [rate, setRate] = useState(1);
     const [review, setReview] = useState('');
     const [skills, setSkills] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [reviews, setReviews] = useState([]);
+    const [jobOffered, setJobOffered] = useState([]);
 
 
 
@@ -87,13 +92,33 @@ const PublicProfile = ({navigation, route})=>{
         }
 
         await axios.post(readSkillsURL, data)
-            .then((response) => {
-                setSkills(response.data.data);
-                console.log(response.data.data);
-            })
-            .catch((e) => {
-                console.log("Error on Getting Skills Data" + e);
-            })
+        .then((response) => {
+            setSkills(response.data.data);
+            console.log(response.data.data);
+        })
+        .catch((e) => {
+            console.log("Error on Getting Skills Data" + e);
+        })
+    }
+
+    //get Job Offered
+    const getJobOffered = async() =>{
+        let body = {
+            "action" : "get_job_offered",
+            "userID" : userID
+        }
+        axios.post(getJobOfferedURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                setJobOffered(response.data.data)
+            }
+            else{
+                setJobOffered([]);
+            }
+        })
+        .catch((error) => {
+            Alert.alert("NetWork Error: Error on Getting JobOffered");
+        })
     }
 
     //createReview
@@ -176,6 +201,7 @@ const PublicProfile = ({navigation, route})=>{
         // getUser();
         getProfileData();
         getReviews();
+        getJobOffered();
     }, []);
 
     return (
@@ -368,32 +394,50 @@ const PublicProfile = ({navigation, route})=>{
                     <ScrollView
                         nestedScrollEnabled = {true}
                     >
-                        <View style = {[globalStyles.card, globalStyles.card_default]}>
-                            <Text style={styles.textName}>
-                                Home Cleaning Service
-                            </Text>
-                            <View style = {globalStyles.row}>
-                                <MaterialIcons name="attach-money" size={18} color="#5B5B5B" />
-                                <Text>
-                                    500 Php
-                                </Text>
-                            </View>
-                            <View style = {globalStyles.row}>
-                                <MaterialIcons name="location-pin" size={18} color="#5B5B5B" />
-                                <Text>
-                                    Dagupan City, Pangasinan
-                                </Text>
-                            </View>
-                            <Text style={styles.textName}>
-                                Description
-                            </Text>
-                            <Text>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                            </Text>
-                            <View style = {styles.edit}>
-                                <Button color='#189AB4' title='View'/>
-                            </View>
-                        </View>
+                        {
+                            (jobOffered.length == 0) && 
+                            <Text style = {styles.textName}> No Jobs Offered</Text>
+                        }
+                        {
+                        jobOffered.map((item, index) => {
+                                    return (
+                                    <View style = {[globalStyles.card, globalStyles.card_default]} key={index}>
+                                        <Text style={styles.textName}>
+                                            {item.jobTitle}
+                                        </Text>
+                                        <View style = {globalStyles.row}>
+                                            <MaterialIcons name="attach-money" size={18} color="#5B5B5B" />
+                                            <Text>
+                                                {item.jobPay} Php
+                                            </Text>
+                                        </View>
+                                        <View style = {globalStyles.row}>
+                                            <MaterialIcons name="location-pin" size={18} color="#5B5B5B" />
+                                            <Text>
+                                                {item.jobLocation}
+                                            </Text>
+                                        </View>
+                                        <Text style={styles.textName}>
+                                            Description
+                                        </Text>
+                                        <Text>
+                                            {item.jobDescription}
+                                        </Text>
+                                        <View style = {styles.edit}>
+                                            <Button color='#189AB4' title='View' onPress={
+                                                ()=>{
+                                                    navigation.navigate('ViewJob', {
+                                                        data : item,
+                                                        userID : appUserID
+                                                    });
+                                                }
+                                            }/>
+                                        </View>
+                                    </View>
+                                    )
+                                }
+                            )
+                        }
                     </ScrollView>
                 </View>
             </ScrollView>

@@ -47,4 +47,6 @@ export let api  = {
     getReviewsURL : "readapi.php",
     //CreateReviews Profile
     createReviewsURL : "createapi.php",
+    //Profile
+    getJobOfferedURL : "readapi.php",
 }
