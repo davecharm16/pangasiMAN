@@ -252,6 +252,7 @@ const Profile = (props) => {
                             onRefresh={onRefresh}
                         />
                     }
+                    stickyHeaderIndices={[1]}
                 >
                     <View style={styles.centeredView}>
                         <Modal
@@ -291,79 +292,82 @@ const Profile = (props) => {
                             </View>
                         </Modal>
                     </View>
-                    <Text style={styles.text}>Personal Information</Text>
-                    <View style={[globalStyles.card, globalStyles.card_default]}>
-                        <View style={styles.innerContainer}>
-                            <View style={styles.image_profile}>
-                                <Image
-                                    style=
-                                    {{
-                                        width: '100%',
-                                        height: '100%',
-                                        borderRadius: 100,
-                                    }}
-                                    source={{ uri: url }}
-                                />
-                            </View>
-                            <View style={styles.textContainer}>
-                                <Text style={styles.textName}>{profileData.firstname} {profileData.lastname}</Text>
-                                <View style={globalStyles.row}>
-                                    <FontAwesome5 name="user" size={18} color="#5B5B5B" />
-                                    <Text style={styles.regText}>
-                                        {user.age} years old, {user.sex}
-                                    </Text>
+                    <View style={{backgroundColor:'#fff'}}>
+                        <Text style={styles.text}>Personal Information</Text>
+                        <View style={[globalStyles.card, globalStyles.card_default]}>
+                            <View style={styles.innerContainer}>
+                                <View style={styles.image_profile}>
+                                    <Image
+                                        style=
+                                        {{
+                                            width: '100%',
+                                            height: '100%',
+                                            borderRadius: 100,
+                                        }}
+                                        source={{ uri: url }}
+                                    />
                                 </View>
-                                <View style={[globalStyles.row, {
-                                    paddingVertical: 2,
-                                    alignItems: 'flex-start',
-                                }]}>
-                                    <SimpleLineIcons name="location-pin" size={18} color="#5B5B5B" />
-                                    <Text style={styles.regText}>
-                                        {profileData.houseNo} {profileData.street} {profileData.baranggay}, {profileData.municipality} {profileData.province}
-                                    </Text>
-                                </View>
-                                <View style={styles.edit}>
-                                    <TouchableOpacity
-                                        onPress={
-                                            // navigation.navigate('PublicProfile')
-                                            () => {
-                                                console.log('EditPressed')
-                                                props.navigation.navigate('EditProfile', {
-                                                    data: profileData
-                                                });
+                                <View style={styles.textContainer}>
+                                    <Text style={styles.textName}>{profileData.firstname} {profileData.lastname}</Text>
+                                    <View style={globalStyles.row}>
+                                        <FontAwesome5 name="user" size={18} color="#5B5B5B" />
+                                        <Text style={styles.regText}>
+                                            {user.age} years old, {user.sex}
+                                        </Text>
+                                    </View>
+                                    <View style={[globalStyles.row, {
+                                        paddingVertical: 2,
+                                        alignItems: 'flex-start',
+                                    }]}>
+                                        <SimpleLineIcons name="location-pin" size={18} color="#5B5B5B" />
+                                        <Text style={styles.regText}>
+                                            {profileData.houseNo} {profileData.street} {profileData.baranggay}, {profileData.municipality} {profileData.province}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.edit}>
+                                        <TouchableOpacity
+                                            onPress={
+                                                // navigation.navigate('PublicProfile')
+                                                () => {
+                                                    console.log('EditPressed')
+                                                    props.navigation.navigate('EditProfile', {
+                                                        data: profileData
+                                                    });
+                                                }
                                             }
-                                        }
-                                    >
-                                        <FontAwesome5 name="edit" size={24} color="#189AB4" />
-                                    </TouchableOpacity>
+                                        >
+                                            <FontAwesome5 name="edit" size={24} color="#189AB4" />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
-                    {/* hack */}
-                    <View style={{ height: 10 }}></View>
-                    {/* hack */}
-                    <View style={[globalStyles.card, globalStyles.card_default]}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                            <Text style={styles.textName}> Contact Information</Text>
-                        </View>
-                        <View style={globalStyles.row}>
-                            <AntDesign name="phone" size={18} color="#5B5B5B" />
-                            <Text style={styles.regText}>
-                                {profileData.contact_no}
-                            </Text>
-                        </View>
-                        <View style={globalStyles.row}>
-                            <MaterialCommunityIcons name="email-outline" size={18} color="#5B5B5B" />
-                            <Text style={styles.regText}>
-                                {profileData.email}
-                            </Text>
+                        {/* hack */}
+                        <View style={{ height: 10 }}></View>
+                        {/* hack */}
+                        <View style={[globalStyles.card, globalStyles.card_default]}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                <Text style={styles.textName}> Contact Information</Text>
+                            </View>
+                            <View style={globalStyles.row}>
+                                <AntDesign name="phone" size={18} color="#5B5B5B" />
+                                <Text style={styles.regText}>
+                                    {profileData.contact_no}
+                                </Text>
+                            </View>
+                            <View style={globalStyles.row}>
+                                <MaterialCommunityIcons name="email-outline" size={18} color="#5B5B5B" />
+                                <Text style={styles.regText}>
+                                    {profileData.email}
+                                </Text>
+                            </View>
                         </View>
                     </View>
 
                     {/* hack */}
                     <View style={{ height: 10 }}></View>
                     {/* hack */}
+                
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 10 }}>
                         <Text style={styles.text}>Skills</Text>
                         <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -405,9 +409,9 @@ const Profile = (props) => {
                     <Text style={styles.text}>Service Reviews</Text>
 
                     <View style={styles.reviewsContainer}>
-                        <ScrollView
+                        {/* <ScrollView
                             nestedScrollEnabled={true}
-                        >
+                        > */}
                         {
                             (reviews.length > 0) ? 
                             reviews.map((item, index)=>{
@@ -431,7 +435,7 @@ const Profile = (props) => {
                             :
                             <Text style= {styles.textName}> No Reviews Yet</Text>
                         }
-                        </ScrollView>
+                        {/* </ScrollView> */}
                     </View>
 
                     {/* hack */}
@@ -440,9 +444,9 @@ const Profile = (props) => {
                     <Text style={styles.text}>Job Offered</Text>
 
                     <View style={styles.reviewsContainer}>
-                        <ScrollView
+                        {/* <ScrollView
                             nestedScrollEnabled={true}
-                        >
+                        > */}
                         {
                             (jobOffered.length == 0) && 
                             <Text style = {styles.textName}> No Jobs Offered</Text>
@@ -489,9 +493,9 @@ const Profile = (props) => {
                                 }
                             )
                         }
-                        </ScrollView>
+                        {/* </ScrollView> */}
+                    
                     </View>
-
                 </ScrollView>
             }
 
@@ -560,7 +564,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
     },
     reviewsContainer: {
-        maxHeight: 250,
+        // maxHeight: 250,
     },
 
     //Modal Style

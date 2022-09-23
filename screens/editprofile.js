@@ -72,9 +72,9 @@ const EditProfile = ({route, navigation}) => {
 
     return (
         <View style={styles.container}>
-            <Text> Test Upload Image</Text>
+            {/* <Text> Test Upload Image</Text> */}
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Button title="Pick an image from camera roll" onPress={pickImage} />
+                <Button title="Change Profile Photo" onPress={pickImage} />
             </View>
         </View>
     );
