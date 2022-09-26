@@ -95,6 +95,7 @@ const JobCard = ({item, navigation, apply, passedID}) => {
                     </TouchableOpacity>
                     {
                         (passedID != item.jobUserID) &&
+                        (item.isApplied == "not applied") &&
                         <CustomButton onPress={()=>{
                             apply(
                                 item.jobID,
@@ -103,6 +104,12 @@ const JobCard = ({item, navigation, apply, passedID}) => {
                         }} 
                             title={'Apply'} styleButton={styles.styleBtn} styleText={styles.btnText}
                         />
+                    }
+                    {
+                        (item.isApplied == "applied") &&
+                        <View style={[styles.styleBtn, {paddingVertical: 5, backgroundColor:'#04AA6B'}]}>
+                            <Text style={[styles.btnText, {textTransform: 'uppercase', fontWeight:'bold'}]}>Applied ✓</Text>
+                        </View>
                     }
                     {/* {
                         (id == item.jobUserID) &&

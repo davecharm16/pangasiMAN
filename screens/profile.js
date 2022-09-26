@@ -39,6 +39,7 @@ const Profile = (props) => {
     const deleteSkillsURL = host + directory + api.deleteSkillsURL;
     const getReviewsURL = host + directory + api.getReviewsURL;
     const getJobOfferedURL = host + directory + api.getJobOfferedURL;
+    const deleteJobURL = host + directory + api.deleteJobURL;
 
 
 
@@ -216,6 +217,51 @@ const Profile = (props) => {
             console.log("Error on Deleting Skill",error);
         })
     }
+
+    const deleteJob =  async (id) => {
+        let body = {
+            "action" : "delete_job",
+            "id" : id
+        }
+        await axios.post(deleteJobURL, body)
+        .then((response)=>{
+            if(response.data.message == "success"){
+                Alert.alert("Success", "Job is Deleted");
+                getProfileData();
+            }
+            else{
+                Alert.alert("Network Error", "Try Deleting Again Later");
+            }
+        })
+        .catch((e)=>{
+            Alert.alert("Network Error", "Try Deleting Again Later");
+        })
+    }
+
+    const deleteJobAlert = (id) =>
+    Alert.alert(
+    "Warning!",
+    "Do you want to delete this Job?",
+    [
+      {
+        text: "Yes",
+        onPress: () => deleteJob(id),
+        style: "cancel",
+      },
+      {
+        text: "Cancel",
+        onPress: () => console.log("cancelled"),
+        style: "cancel",
+      },
+    ],
+    {
+      cancelable: true,
+      onDismiss: () =>
+        console.log(
+          "This alert was dismissed by tapping outside of the alert dialog."
+        )
+    }
+    );
 
 
     useEffect(
@@ -486,7 +532,10 @@ const Profile = (props) => {
                                                 }
                                             }/>
                                             <View style={{width:10}}></View>
-                                            <Button color='#ed5e68' title='Delete' />
+                                            <Button color='#ed5e68' title='Delete' onPress={()=>{
+                                                // console.log(item.jobID);
+                                                deleteJobAlert(item.jobID);
+                                            }}/>
                                         </View>
                                     </View>
                                     )

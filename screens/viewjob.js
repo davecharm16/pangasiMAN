@@ -64,9 +64,9 @@ const ViewJob = ({navigation, route}) =>{
     {
       cancelable: true,
       onDismiss: () =>
-        Alert.alert(
+        console.log(
           "This alert was dismissed by tapping outside of the alert dialog."
-        ),
+        )
     }
     );
 
@@ -89,9 +89,9 @@ const ViewJob = ({navigation, route}) =>{
     {
       cancelable: true,
       onDismiss: () =>
-        Alert.alert(
+        console.log(
           "This alert was dismissed by tapping outside of the alert dialog."
-        ),
+        )
     }
     );
 
@@ -318,12 +318,12 @@ const ViewJob = ({navigation, route}) =>{
                     {
                         //Only Show  to the Creator
                         (data.jobUserID == userID) &&
-                        <View style ={[globalStyles.card, styles.card, {height: 120}]} >
+                        <View style ={[globalStyles.card, styles.card]} >
                             <View style={styles.row}>
                                 <MaterialCommunityIcons name="briefcase-eye" size={24} color="black" />
                                 <Text style = {[styles.cardText]}> Applicants {(applicants.length != 0) ? ": " + applicants.length : "" }</Text>
                             </View>
-                            <View style={{flex:1}}>
+                            <View style={{flex:1, maxHeight: 300}}>
                                 <ScrollView
                                     nestedScrollEnabled = {true}
                                 >
