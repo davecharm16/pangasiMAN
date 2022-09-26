@@ -336,6 +336,7 @@ const SignUpForm =({navigation})=>{
                                             onChangeText= {props.handleChange('contact_no')}
                                             value = {props.values.contact_no}
                                             onBlur = {props.handleBlur('contact_no')}
+                                            keyboardType = 'phone-pad'
                                         />
                                         {props.errors.contact_no && props.touched.contact_no &&
                                             <Text style={{ fontSize: 10, color: 'red', paddingHorizontal:15 }}>{ props.errors.contact_no}</Text>
