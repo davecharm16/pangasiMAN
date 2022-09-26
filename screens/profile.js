@@ -600,6 +600,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Mont-Bold',
         fontSize: 14,
         marginVertical: 5,
+        textTransform : 'capitalize',
     },
     regText: {
         fontFamily: 'Mont-Regular',
