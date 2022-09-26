@@ -26,6 +26,8 @@ const deleteCommentURL = host+directory+api.deleteCommentURL;
 
 const readApplicantsURL = host+directory+api.readApplicantsURL;
 
+const updateStatusURL = host+directory+api.updateStatusURL;
+
 
 
 const ViewJob = ({navigation, route}) =>{
@@ -62,11 +64,61 @@ const ViewJob = ({navigation, route}) =>{
     {
       cancelable: true,
       onDismiss: () =>
-        Alert.alert(
+        console.log(
           "This alert was dismissed by tapping outside of the alert dialog."
-        ),
+        )
     }
     );
+
+    const markDoneAlert = (id) =>
+    Alert.alert(
+    "Warning!",
+    "Do you want to Mark Done this Job?",
+    [
+      {
+        text: "Yes",
+        onPress: () => updateStatus(id),
+        style: "cancel",
+      },
+      {
+        text: "Cancel",
+        onPress: () => console.log("cancelled"),
+        style: "cancel",
+      },
+    ],
+    {
+      cancelable: true,
+      onDismiss: () =>
+        console.log(
+          "This alert was dismissed by tapping outside of the alert dialog."
+        )
+    }
+    );
+
+    const updateStatus = async (id) =>{
+        let body = {
+            "action" : "update_status",
+            "status" : 1,
+            "jobID" : id
+        }
+
+        await axios.post(
+            updateStatusURL,
+            body
+        )
+        .then((response) =>{
+            if(response.data.message == "success"){
+                Alert.alert(response.data.message);
+                setData(prev=>({...prev, status:1}));
+            }
+            else{
+                Alert.alert("Update Failed");
+            }
+        })
+        .catch((e)=>{
+            Alert.alert("Network Error : ", "Check Internet Connection , Try again later.");
+        })
+    }
 
     const timePosted=(time)=>{
         return moment(time).fromNow();
@@ -205,7 +257,14 @@ const ViewJob = ({navigation, route}) =>{
                 <View style = {styles.cardContainer}>
                     <Text style = {styles.text}>Job Offer</Text>
                     <View style ={[globalStyles.card, styles.card]}>
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={()=>{
+                                navigation.navigate('PublicProfile', {
+                                    userID : data.jobUserID,
+                                    appUserID : userID,
+                                });
+                            }}
+                        >
                             <View style = {styles.row}>
                                 <FontAwesome name="user-circle" size={24} color="black" />
                                 <View style={{width: 10}}></View>
@@ -259,12 +318,12 @@ const ViewJob = ({navigation, route}) =>{
                     {
                         //Only Show  to the Creator
                         (data.jobUserID == userID) &&
-                        <View style ={[globalStyles.card, styles.card, {height: 120}]} >
+                        <View style ={[globalStyles.card, styles.card]} >
                             <View style={styles.row}>
                                 <MaterialCommunityIcons name="briefcase-eye" size={24} color="black" />
                                 <Text style = {[styles.cardText]}> Applicants {(applicants.length != 0) ? ": " + applicants.length : "" }</Text>
                             </View>
-                            <View style={{flex:1}}>
+                            <View style={{flex:1, maxHeight: 300}}>
                                 <ScrollView
                                     nestedScrollEnabled = {true}
                                 >
@@ -315,7 +374,11 @@ const ViewJob = ({navigation, route}) =>{
                                         )
                                     }}
                             />
-                            <Button title="Mark Done" color={"#189AB4"}/>
+                            {   (data.status == 0) ?
+                                <Button title="Mark Done" color={"#189AB4"} onPress = {()=>{markDoneAlert(data.jobID)}}/>
+                                :
+                                <Button title="Done" color={"#189AB4"} disabled= {true}/>
+                            }   
                             {/* <Button title="Delete" color={'#ed5e68'}/> */}
                         </View>
                     </View>
@@ -343,7 +406,14 @@ const ViewJob = ({navigation, route}) =>{
                             return (
                                 <View style ={[globalStyles.card,styles.card, {backgroundColor:'#fff', borderRadius: 4}]} key= {index} >
                                     <View style = {[styles.row,{justifyContent:"space-between"}]}>
-                                        <TouchableOpacity>
+                                        <TouchableOpacity
+                                            onPress={()=>{
+                                                navigation.navigate('PublicProfile', {
+                                                    userID : item.userID,
+                                                    appUserID : userID,
+                                                });
+                                            }}
+                                        >
                                             <View style={{flexDirection: 'row'}}>
                                                 <FontAwesome name="user-circle" size={24} color="black" />
                                                 <View style={{width: 10}}></View>

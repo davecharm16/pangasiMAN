@@ -37,13 +37,20 @@ const Profile = (props) => {
     const readSkillsURL = host + directory + api.readSkillsURL;
     const createSkillsURL = host + directory + api.createSkillsURL;
     const deleteSkillsURL = host + directory + api.deleteSkillsURL;
+    const getReviewsURL = host + directory + api.getReviewsURL;
+    const getJobOfferedURL = host + directory + api.getJobOfferedURL;
+    const deleteJobURL = host + directory + api.deleteJobURL;
+
+
 
     const [user, setUser] = useState('');
     const [url, setUrl] = useState();
     const [skills, setSkills] = useState([]);
     const [skillCreate, setSkillCreate] = useState('');
     const [profileData, setProfileData] = useState(null);
+    const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [jobOffered, setJobOffered] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
 
     // const getUser = async ()=>{
@@ -56,6 +63,46 @@ const Profile = (props) => {
     //         setUser('');
     //     }
     // }
+    //
+    const getJobOffered = async(userID) =>{
+        let body = {
+            "action" : "get_job_offered",
+            "userID" : userID
+        }
+        axios.post(getJobOfferedURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                setJobOffered(response.data.data)
+            }
+            else{
+                setJobOffered([]);
+            }
+        })
+        .catch((error) => {
+            Alert.alert("NetWork Error: Error on Getting JobOffered");
+        })
+    }
+
+    //getreviews
+    const getReviews = async(userID) =>{
+        let body = {
+            "action" : "get_reviews",
+            "userID" : userID
+        }
+
+        axios.post(getReviewsURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                setReviews(response.data.data)
+            }
+            else{
+                setReviews([]);
+            }
+        })
+        .catch((error) => {
+            Alert.alert("NetWork Error: Error on Getting Reviews");
+        })
+    }
 
     const getSkills = async (id) => {
 
@@ -96,6 +143,8 @@ const Profile = (props) => {
                 setProfileData(response.data.data[0]);
                 funct(response.data.data[0]);
                 getSkills(result.userID);
+                getReviews(result.userID);
+                getJobOffered(result.userID);
                 setLoading(false);
             })
             .catch((e) => {
@@ -169,6 +218,51 @@ const Profile = (props) => {
         })
     }
 
+    const deleteJob =  async (id) => {
+        let body = {
+            "action" : "delete_job",
+            "id" : id
+        }
+        await axios.post(deleteJobURL, body)
+        .then((response)=>{
+            if(response.data.message == "success"){
+                Alert.alert("Success", "Job is Deleted");
+                getProfileData();
+            }
+            else{
+                Alert.alert("Network Error", "Try Deleting Again Later");
+            }
+        })
+        .catch((e)=>{
+            Alert.alert("Network Error", "Try Deleting Again Later");
+        })
+    }
+
+    const deleteJobAlert = (id) =>
+    Alert.alert(
+    "Warning!",
+    "Do you want to delete this Job?",
+    [
+      {
+        text: "Yes",
+        onPress: () => deleteJob(id),
+        style: "cancel",
+      },
+      {
+        text: "Cancel",
+        onPress: () => console.log("cancelled"),
+        style: "cancel",
+      },
+    ],
+    {
+      cancelable: true,
+      onDismiss: () =>
+        console.log(
+          "This alert was dismissed by tapping outside of the alert dialog."
+        )
+    }
+    );
+
 
     useEffect(
         () => {
@@ -204,6 +298,7 @@ const Profile = (props) => {
                             onRefresh={onRefresh}
                         />
                     }
+                    stickyHeaderIndices={[1]}
                 >
                     <View style={styles.centeredView}>
                         <Modal
@@ -243,79 +338,82 @@ const Profile = (props) => {
                             </View>
                         </Modal>
                     </View>
-                    <Text style={styles.text}>Personal Information</Text>
-                    <View style={[globalStyles.card, globalStyles.card_default]}>
-                        <View style={styles.innerContainer}>
-                            <View style={styles.image_profile}>
-                                <Image
-                                    style=
-                                    {{
-                                        width: '100%',
-                                        height: '100%',
-                                        borderRadius: 100,
-                                    }}
-                                    source={{ uri: url }}
-                                />
-                            </View>
-                            <View style={styles.textContainer}>
-                                <Text style={styles.textName}>{profileData.firstname} {profileData.lastname}</Text>
-                                <View style={globalStyles.row}>
-                                    <FontAwesome5 name="user" size={18} color="#5B5B5B" />
-                                    <Text style={styles.regText}>
-                                        {user.age} years old, {user.sex}
-                                    </Text>
+                    <View style={{backgroundColor:'#fff'}}>
+                        <Text style={styles.text}>Personal Information</Text>
+                        <View style={[globalStyles.card, globalStyles.card_default]}>
+                            <View style={styles.innerContainer}>
+                                <View style={styles.image_profile}>
+                                    <Image
+                                        style=
+                                        {{
+                                            width: '100%',
+                                            height: '100%',
+                                            borderRadius: 100,
+                                        }}
+                                        source={{ uri: url }}
+                                    />
                                 </View>
-                                <View style={[globalStyles.row, {
-                                    paddingVertical: 2,
-                                    alignItems: 'flex-start',
-                                }]}>
-                                    <SimpleLineIcons name="location-pin" size={18} color="#5B5B5B" />
-                                    <Text style={styles.regText}>
-                                        {profileData.houseNo} {profileData.street} {profileData.baranggay}, {profileData.municipality} {profileData.province}
-                                    </Text>
-                                </View>
-                                <View style={styles.edit}>
-                                    <TouchableOpacity
-                                        onPress={
-                                            // navigation.navigate('PublicProfile')
-                                            () => {
-                                                console.log('EditPressed')
-                                                props.navigation.navigate('EditProfile', {
-                                                    data: profileData
-                                                });
+                                <View style={styles.textContainer}>
+                                    <Text style={styles.textName}>{profileData.firstname} {profileData.lastname}</Text>
+                                    <View style={globalStyles.row}>
+                                        <FontAwesome5 name="user" size={18} color="#5B5B5B" />
+                                        <Text style={styles.regText}>
+                                            {user.age} years old, {user.sex}
+                                        </Text>
+                                    </View>
+                                    <View style={[globalStyles.row, {
+                                        paddingVertical: 2,
+                                        alignItems: 'flex-start',
+                                    }]}>
+                                        <SimpleLineIcons name="location-pin" size={18} color="#5B5B5B" />
+                                        <Text style={styles.regText}>
+                                            {profileData.houseNo} {profileData.street} {profileData.baranggay}, {profileData.municipality} {profileData.province}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.edit}>
+                                        <TouchableOpacity
+                                            onPress={
+                                                // navigation.navigate('PublicProfile')
+                                                () => {
+                                                    console.log('EditPressed')
+                                                    props.navigation.navigate('EditProfile', {
+                                                        data: profileData
+                                                    });
+                                                }
                                             }
-                                        }
-                                    >
-                                        <FontAwesome5 name="edit" size={24} color="#189AB4" />
-                                    </TouchableOpacity>
+                                        >
+                                            <FontAwesome5 name="edit" size={24} color="#189AB4" />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
-                    {/* hack */}
-                    <View style={{ height: 10 }}></View>
-                    {/* hack */}
-                    <View style={[globalStyles.card, globalStyles.card_default]}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                            <Text style={styles.textName}> Contact Information</Text>
-                        </View>
-                        <View style={globalStyles.row}>
-                            <AntDesign name="phone" size={18} color="#5B5B5B" />
-                            <Text style={styles.regText}>
-                                {profileData.contact_no}
-                            </Text>
-                        </View>
-                        <View style={globalStyles.row}>
-                            <MaterialCommunityIcons name="email-outline" size={18} color="#5B5B5B" />
-                            <Text style={styles.regText}>
-                                {profileData.email}
-                            </Text>
+                        {/* hack */}
+                        <View style={{ height: 10 }}></View>
+                        {/* hack */}
+                        <View style={[globalStyles.card, globalStyles.card_default]}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                <Text style={styles.textName}> Contact Information</Text>
+                            </View>
+                            <View style={globalStyles.row}>
+                                <AntDesign name="phone" size={18} color="#5B5B5B" />
+                                <Text style={styles.regText}>
+                                    {profileData.contact_no}
+                                </Text>
+                            </View>
+                            <View style={globalStyles.row}>
+                                <MaterialCommunityIcons name="email-outline" size={18} color="#5B5B5B" />
+                                <Text style={styles.regText}>
+                                    {profileData.email}
+                                </Text>
+                            </View>
                         </View>
                     </View>
 
                     {/* hack */}
                     <View style={{ height: 10 }}></View>
                     {/* hack */}
+                
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 10 }}>
                         <Text style={styles.text}>Skills</Text>
                         <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -357,55 +455,33 @@ const Profile = (props) => {
                     <Text style={styles.text}>Service Reviews</Text>
 
                     <View style={styles.reviewsContainer}>
-                        <ScrollView
+                        {/* <ScrollView
                             nestedScrollEnabled={true}
-                        >
-                            <View style={[globalStyles.card, globalStyles.card_default]}>
-                                <Text style={styles.textName}>
-                                    Walter O Brien
-                                </Text>
-                                <View style={globalStyles.row}>
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                </View>
-                                <Text>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                                </Text>
-                            </View>
-                            <View style={[globalStyles.card, globalStyles.card_default]}>
-                                <Text style={styles.textName}>
-                                    Tobias Curtis
-                                </Text>
-                                <View style={globalStyles.row}>
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                </View>
-                                <Text>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                                </Text>
-                            </View>
-                            <View style={[globalStyles.card, globalStyles.card_default]}>
-                                <Text style={styles.textName}>
-                                    Tobias Curtis
-                                </Text>
-                                <View style={globalStyles.row}>
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                    <FontAwesome name="star" size={14} color="#189AB4" />
-                                </View>
-                                <Text>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                                </Text>
-                            </View>
-                        </ScrollView>
+                        > */}
+                        {
+                            (reviews.length > 0) ? 
+                            reviews.map((item, index)=>{
+                                return(
+                                    <View style = {[globalStyles.card, globalStyles.card_default]} key={index}>
+                                        <Text style={styles.textName}>
+                                            {item.firstname} {item.lastname}
+                                        </Text>
+                                        <View style = {globalStyles.row}>
+                                        {[...Array(parseInt(item.stars))].map((elementInArray, ind) => {
+                                            return(<FontAwesome name="star" size={14} color="#189AB4" key={ind}/>)
+                                            }
+                                        )}
+                                        </View>
+                                        <Text>
+                                            {item.review}
+                                        </Text>
+                                    </View>
+                                )
+                            })
+                            :
+                            <Text style= {styles.textName}> No Reviews Yet</Text>
+                        }
+                        {/* </ScrollView> */}
                     </View>
 
                     {/* hack */}
@@ -414,38 +490,61 @@ const Profile = (props) => {
                     <Text style={styles.text}>Job Offered</Text>
 
                     <View style={styles.reviewsContainer}>
-                        <ScrollView
+                        {/* <ScrollView
                             nestedScrollEnabled={true}
-                        >
-                            <View style={[globalStyles.card, globalStyles.card_default]}>
-                                <Text style={styles.textName}>
-                                    Home Cleaning Service
-                                </Text>
-                                <View style={globalStyles.row}>
-                                    <MaterialIcons name="attach-money" size={18} color="#5B5B5B" />
-                                    <Text>
-                                        500 Php
-                                    </Text>
-                                </View>
-                                <View style={globalStyles.row}>
-                                    <MaterialIcons name="location-pin" size={18} color="#5B5B5B" />
-                                    <Text>
-                                        Dagupan City, Pangasinan
-                                    </Text>
-                                </View>
-                                <Text style={styles.textName}>
-                                    Description
-                                </Text>
-                                <Text>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nihil qui nisi accusantium. Laudantium, reiciendis voluptatibus fugit explicabo est esse.
-                                </Text>
-                                <View style={styles.edit}>
-                                    <Button color='#189AB4' title='View' />
-                                </View>
-                            </View>
-                        </ScrollView>
+                        > */}
+                        {
+                            (jobOffered.length == 0) && 
+                            <Text style = {styles.textName}> No Jobs Offered</Text>
+                        }
+                        {
+                        jobOffered.map((item, index) => {
+                                    return (
+                                    <View style = {[globalStyles.card, globalStyles.card_default]} key={index}>
+                                        <Text style={styles.textName}>
+                                            {item.jobTitle}
+                                        </Text>
+                                        <View style = {globalStyles.row}>
+                                            <MaterialIcons name="attach-money" size={18} color="#5B5B5B" />
+                                            <Text>
+                                                {item.jobPay} Php
+                                            </Text>
+                                        </View>
+                                        <View style = {globalStyles.row}>
+                                            <MaterialIcons name="location-pin" size={18} color="#5B5B5B" />
+                                            <Text>
+                                                {item.jobLocation}
+                                            </Text>
+                                        </View>
+                                        <Text style={styles.textName}>
+                                            Description
+                                        </Text>
+                                        <Text>
+                                            {item.jobDescription}
+                                        </Text>
+                                        <View style = {styles.edit}>
+                                            <Button color='#189AB4' title='View' onPress={
+                                                ()=>{
+                                                    props.navigation.navigate('ViewJob', {
+                                                        data : item,
+                                                        userID : profileData.userID
+                                                    });
+                                                }
+                                            }/>
+                                            <View style={{width:10}}></View>
+                                            <Button color='#ed5e68' title='Delete' onPress={()=>{
+                                                // console.log(item.jobID);
+                                                deleteJobAlert(item.jobID);
+                                            }}/>
+                                        </View>
+                                    </View>
+                                    )
+                                }
+                            )
+                        }
+                        {/* </ScrollView> */}
+                    
                     </View>
-
                 </ScrollView>
             }
 
@@ -514,7 +613,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
     },
     reviewsContainer: {
-        height: 250,
+        // maxHeight: 250,
     },
 
     //Modal Style

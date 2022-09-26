@@ -40,5 +40,15 @@ export let api  = {
     //ViewJobs - Read Applicants
     readApplicantsURL : "readapi.php",
     //EditJobs
-    editJobURL : "updateapi.php"
+    editJobURL : "updateapi.php",
+    //View Jobs - Mark as Done
+    updateStatusURL : "updateapi.php",
+    //GetReviews Profile
+    getReviewsURL : "readapi.php",
+    //CreateReviews Profile
+    createReviewsURL : "createapi.php",
+    //Profile
+    getJobOfferedURL : "readapi.php",
+    //Delete Job Profile
+    deleteJobURL : "deleteapi.php",
 }

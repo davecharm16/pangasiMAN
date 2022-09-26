@@ -185,6 +185,8 @@ const SignUpForm =({navigation})=>{
             
                                         }
                                     </View>
+                                </View>
+                                <View style = {styles.inputContainer}>
                                     <View style = {styles.formInputContainer}>
                                         <TextInput 
                                             placeholder='Last Name' placeholderTextColor={'#189AB4'} 
@@ -435,13 +437,14 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         paddingHorizontal : 10,
         fontFamily : 'Inter-Regular',
-        borderRadius: 10,
+        borderRadius: 5,
         marginVertical: 10,
-        fontSize:12,
+        fontSize:14,
     },
     form_head : {
         fontFamily : 'Inter-Bold',
         fontSize : 20,
+        marginTop: 10,
         textTransform: 'uppercase',
         color : '#05445E'
 

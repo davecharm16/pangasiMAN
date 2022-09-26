@@ -65,6 +65,7 @@ function MyDrawer(props) {
     >
       <Drawer.Screen name="Profile" component={Profile} options = {{
         headerTintColor : '#fff',
+        headerTitle: "Your Profile",
         headerStyle: {
           backgroundColor: '#05445E',
         }
