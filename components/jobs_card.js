@@ -67,7 +67,7 @@ const JobCard = ({item, navigation, apply, passedID}) => {
                 </View>
                 <View style = {styles.itemContainer}>
                     <MaterialIcons name="attach-money" size={24} color="#5B5B5B" />
-                    <Text style={[styles.cardText, styles.grayText]}>{item.jobPay} Php</Text>
+                    <Text style={[styles.cardText, styles.grayText]}>{item.jobPay} Php / Day</Text>
                 </View>
                 <View style = {styles.itemContainer}>
                     <MaterialIcons name="location-pin" size={24} color="#5B5B5B" />

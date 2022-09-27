@@ -113,7 +113,7 @@ const CreateJob = () =>{
                             }
                             <View style={styles.row}>
                                 <MaterialIcons name="attach-money" size={24} color="#5B5B5B" />
-                                <TextInput placeholder="Pay 0.00" keyboardType="numeric" style = {[globalStyles.card, styles.inputCard]}
+                                <TextInput placeholder="Pay 0.00 / Day" keyboardType="numeric" style = {[globalStyles.card, styles.inputCard]}
                                     onChangeText= {props.handleChange('jobPay')}
                                     value = {props.values.jobPay}
                                     onBlur = {props.handleBlur('jobPay')}

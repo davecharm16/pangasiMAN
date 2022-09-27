@@ -52,5 +52,9 @@ export let api  = {
     //Delete Job Profile
     deleteJobURL : "deleteapi.php",
     //Udate Information Edit Profile
-    updateInformationURL : "updateapi.php"
+    updateInformationURL : "updateapi.php",
+    //Update Address Information : Edit Profile
+    updateAddressURL : "updateapi.php",
+    //Update Password : Edit Profile
+    updatePasswordURL : "updateapi.php",
 }

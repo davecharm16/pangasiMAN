@@ -6,6 +6,7 @@ import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, getDownloadURL} from 'firebase/storage';
 import axios from 'axios';
 import { api, host, directory } from '../api_link';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {Formik} from 'formik';
 import { TextInput} from 'react-native-paper';
 import * as yup from 'yup';
@@ -67,9 +68,15 @@ const EditProfile = ({route, navigation}) => {
     const updateURL = host+directory+api.updateURL;
     //updateInformation URL
     const updateInformationURL = host+directory+api.updateInformationURL;
+    const updateAddressURL = host+directory+api.updateAddressURL;
+    const updatePasswordURL = host+directory+api.updatePasswordURL;
+
+
 
     // const {data} = route.params;
     const [data, setData] = useState(route.params.data);
+    const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+    const [isNewPasswordSecure, setIsNewPasswordSecure] = useState(true);
     const [image, setImage] = useState('');
     const [url, setUrl] = useState();
 
@@ -112,7 +119,55 @@ const EditProfile = ({route, navigation}) => {
                 ToastAndroid.show("Personal Information Updated!", ToastAndroid.LONG);
             }
             else{
-                ToastAndroid.show("Personal Information Updated!", ToastAndroid.LONG);
+                ToastAndroid.show("Personal Information is not Updated!", ToastAndroid.LONG);
+            }
+        })
+        .catch((e)=>{
+            Alert.alert("Network Error", "Error Updating, Check your Internet Connection");
+        })
+    }
+
+    const updateAddress = async (values)=>{
+        let body = {
+            "action" : "update_address",
+            "houseNo" : values.houseNo,
+            "street" : values.street,
+            "baranggay" : values.baranggay,
+            "municipality" : values.municipality,
+            "province" : values.province,
+            "zipcode" : values.zipcode,
+            "addressID" : data.addressID
+        }
+
+        await axios.post(updateAddressURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                ToastAndroid.show("Address Information Updated!", ToastAndroid.LONG);
+            }
+            else{
+                ToastAndroid.show("Address Information is not Updated!", ToastAndroid.LONG);
+            }
+        })
+        .catch((e)=>{
+            Alert.alert("Network Error", "Error Updating, Check your Internet Connection");
+        })
+    }
+
+    const updatePassword = async (values)=>{
+        let body = {
+            "action" : "update_password",
+            "old_password" : values.old_password,
+            "new_password" : values.password,
+            "userID" : data.userID
+        }
+
+        await axios.post(updatePasswordURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                ToastAndroid.show("Password Updated!", ToastAndroid.LONG);
+            }
+            else{
+                ToastAndroid.show("Update Password Failed, Wrong password!", ToastAndroid.LONG);
             }
         })
         .catch((e)=>{
@@ -320,7 +375,8 @@ const EditProfile = ({route, navigation}) => {
                         }
                         onSubmit = {
                             (values, action) =>{
-                                console.log(values)
+                                console.log(values);
+                                updateAddress(values);
                             }
                         }
                     >
@@ -347,6 +403,7 @@ const EditProfile = ({route, navigation}) => {
                                                 value = {props.values.houseNo}
                                                 onChangeText= {props.handleChange('houseNo')}
                                                 onBlur = {props.handleBlur('houseNo')}
+                                                keyboardType = 'numeric'
                                             />
                                         </View>
                                         <View style = {styles.inputContainer}>
@@ -368,6 +425,8 @@ const EditProfile = ({route, navigation}) => {
                                                 value = {props.values.street}
                                                 onChangeText= {props.handleChange('street')}
                                                 onBlur = {props.handleBlur('street')}
+                                                multiline = {true}
+                                                numberOfLines = {2}
                                             />
                                         </View>
                                     </View>
@@ -474,6 +533,7 @@ const EditProfile = ({route, navigation}) => {
                                                 value = {props.values.zipcode}
                                                 onChangeText= {props.handleChange('zipcode')}
                                                 onBlur = {props.handleBlur('zipcode')}
+                                                keyboardType = 'numeric'
                                             />
                                             {
                                                 props.errors.zipcode && props.touched.zipcode &&
@@ -505,6 +565,8 @@ const EditProfile = ({route, navigation}) => {
                         onSubmit = {
                             (values, action) =>{
                                 console.log(values);
+                                updatePassword(values);
+                                action.resetForm();
                             }
                         }
                     >
@@ -512,7 +574,7 @@ const EditProfile = ({route, navigation}) => {
                             (props)=>(
                                 <View>
                                     <TextInput mode='outlined'
-                                    secureTextEntry = {true}
+                                    secureTextEntry = {isPasswordSecure}
                                     theme={
                                         { 
                                         colors: { 
@@ -523,6 +585,12 @@ const EditProfile = ({route, navigation}) => {
                                             } 
                                         }
                                     } 
+                                    right={
+                                        <TextInput.Icon
+                                          name={() => <MaterialCommunityIcons name={isPasswordSecure ? "eye-off" : "eye"} size={28} color={'#189AB4'} />} // where <Icon /> is any component from vector-icons or anything else
+                                          onPress={() => { isPasswordSecure ? setIsPasswordSecure(false) : setIsPasswordSecure(true) }}
+                                        />
+                                      }
                                     label = "Old Password"
                                     outlineColor={sec_color} activeOutlineColor = {sec_color}
                                     selectionColor = {sec_color} placeholderTextColor = {sec_color} 
@@ -547,7 +615,13 @@ const EditProfile = ({route, navigation}) => {
                                             placeholder : '#189AB4',
                                             } 
                                         }
-                                    } 
+                                    }
+                                    right={
+                                        <TextInput.Icon
+                                          name={() => <MaterialCommunityIcons name={isNewPasswordSecure ? "eye-off" : "eye"} size={28} color={'#189AB4'} />} // where <Icon /> is any component from vector-icons or anything else
+                                          onPress={() => { isNewPasswordSecure ? setIsNewPasswordSecure(false) : setIsNewPasswordSecure(true) }}
+                                        />
+                                      }
                                     label = "New Password"
                                     outlineColor={sec_color} activeOutlineColor = {sec_color}
                                     selectionColor = {sec_color} placeholderTextColor = {sec_color} 
@@ -555,7 +629,7 @@ const EditProfile = ({route, navigation}) => {
                                     value = {props.values.password}
                                     onChangeText= {props.handleChange('password')}
                                     onBlur = {props.handleBlur('password')}
-                                    secureTextEntry = {true}
+                                    secureTextEntry = {isNewPasswordSecure}
                                     />
                                     {
                                         props.errors.password && props.touched.password &&
@@ -636,6 +710,7 @@ const styles = StyleSheet.create({
     txtInp : {
         color : '#189AB4',
         fontFamily : 'Inter-Bold',
+        fontSize: 15,
         fontWeight : 'bold',
         textTransform : 'capitalize',
         marginVertical : 5,

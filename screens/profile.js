@@ -423,6 +423,10 @@ const Profile = (props) => {
                     <View style={[globalStyles.card, globalStyles.card_default]}>
                         <View style={[globalStyles.row, {flexWrap:'wrap', justifyContent:'flex-start'}]}>
                             {
+                                (skills.length == 0) && 
+                                <Text style = {styles.textName}>Add your Skills Here</Text>
+                            }
+                            {
                                 skills.map((item, index) => {
                                     return (
                                         <View style={styles.skillContainer} key={index}>
@@ -507,7 +511,7 @@ const Profile = (props) => {
                                         <View style = {globalStyles.row}>
                                             <MaterialIcons name="attach-money" size={18} color="#5B5B5B" />
                                             <Text>
-                                                {item.jobPay} Php
+                                                {item.jobPay} Php / Day
                                             </Text>
                                         </View>
                                         <View style = {globalStyles.row}>

@@ -415,7 +415,7 @@ const PublicProfile = ({navigation, route})=>{
                                                 <View style = {globalStyles.row}>
                                                     <MaterialIcons name="attach-money" size={18} color="#5B5B5B" />
                                                     <Text>
-                                                        {item.jobPay} Php
+                                                        {item.jobPay} Php / Day
                                                     </Text>
                                                 </View>
                                                 <View style = {globalStyles.row}>
