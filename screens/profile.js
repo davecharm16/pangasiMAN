@@ -179,7 +179,7 @@ const Profile = (props) => {
     const funct = async (hasProfile) => {
         if (hasProfile.hasProfile != "0") {
             const storage = getStorage();
-            const imageName = '/' + hasProfile.firstname + hasProfile.userID + 'images.jpg';
+            const imageName = '/' + hasProfile.sex + hasProfile.userID + 'images.jpg';
             console.log(imageName);
             const reference = ref(storage, imageName);
             await getDownloadURL(reference).then((x) => {

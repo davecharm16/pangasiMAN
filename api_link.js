@@ -51,4 +51,6 @@ export let api  = {
     getJobOfferedURL : "readapi.php",
     //Delete Job Profile
     deleteJobURL : "deleteapi.php",
+    //Udate Information Edit Profile
+    updateInformationURL : "updateapi.php"
 }

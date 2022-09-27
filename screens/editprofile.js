@@ -1,9 +1,9 @@
 import React, { useEffect, useState} from 'react';
-import { Button, Image, View, Platform, Text, StyleSheet, Alert,ScrollView} from 'react-native';
+import { Button, Image, View, Platform, Text, StyleSheet, Alert,ScrollView, ToastAndroid} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import fireBaseConfig from '../fireBaseConfig';
 import { initializeApp } from 'firebase/app';
-import { getStorage, ref, uploadBytes } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL} from 'firebase/storage';
 import axios from 'axios';
 import { api, host, directory } from '../api_link';
 import {Formik} from 'formik';
@@ -65,8 +65,13 @@ const EditProfile = ({route, navigation}) => {
     // const updateURL = "http://192.168.100.54/pangasimanAPI/rest/api/updateapi.php";
     console.log(host+directory+api.updateURL);
     const updateURL = host+directory+api.updateURL;
-    const {data} = route.params;
+    //updateInformation URL
+    const updateInformationURL = host+directory+api.updateInformationURL;
+
+    // const {data} = route.params;
+    const [data, setData] = useState(route.params.data);
     const [image, setImage] = useState('');
+    const [url, setUrl] = useState();
 
     console.log(data);
 
@@ -80,13 +85,63 @@ const EditProfile = ({route, navigation}) => {
             "userID" : data.userID
         }
 
-        axios.post(updateURL, body)
+        await axios.post(updateURL, body)
         .then((response)=>{
             console.log(response.data.message);
+            setData((prevState)=>({...prevState, hasProfile : 1}));
+            getProfilePic();
         })
         .catch((e)=>{
             console.log("ERROR UPDATING PROF. PIC" + e);
         })
+
+    }
+
+    const updateInformation = async (values)=>{
+        let body = {
+            "action" : "update_information",
+            "firstname" : values.firstname,
+            "lastname" : values.lastname,
+            "contact_no" : values.contact_no,
+            "userID" : data.userID
+        }
+
+        await axios.post(updateInformationURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                ToastAndroid.show("Personal Information Updated!", ToastAndroid.LONG);
+            }
+            else{
+                ToastAndroid.show("Personal Information Updated!", ToastAndroid.LONG);
+            }
+        })
+        .catch((e)=>{
+            Alert.alert("Network Error", "Error Updating, Check your Internet Connection");
+        })
+    }
+
+    const getProfilePic = async() =>{
+        // if(data.hasProfile != 0) {
+            const storage = getStorage();
+            const imageName = '/' + data.sex + data.userID + 'images.jpg';
+            const reference = ref(storage, imageName);
+            await getDownloadURL(reference).then((x) => {
+                console.log(x);
+                setUrl(x);
+            })
+            .catch((e) =>{
+                console.log(e);
+            })
+        // }
+        // else{
+        //     const storage = getStorage();
+        //     const imageName = '/images.jpg';
+        //     const reference = ref(storage, imageName);
+        //     await getDownloadURL(reference).then((x) => {
+        //         console.log(x);
+        //         setUrl(x);
+        //     })
+        // }
     }
 
 
@@ -114,7 +169,7 @@ const EditProfile = ({route, navigation}) => {
 
     const uploadImage = async (uri) => {
         console.log('image is uploaded');
-        const imageName = data.firstname+data.userID + 'images.jpg';
+        const imageName = data.sex+data.userID + 'images.jpg';
         const storage = getStorage();
         // Create a child reference
         const imagesRef = ref(storage, imageName);
@@ -124,6 +179,11 @@ const EditProfile = ({route, navigation}) => {
 
         await uploadBytes(imagesRef, bytes);
     }
+    
+    useEffect(
+        ()=>{
+            getProfilePic();
+        }, []);
   
 
     return (
@@ -134,7 +194,13 @@ const EditProfile = ({route, navigation}) => {
             >
                 {/* <Text> Test Upload Image</Text> */}
                 <View style={styles.profile_photo}>
-                    <Image/>
+                    <Image style=
+                        {{
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: 100,
+                        }}
+                        source={{ uri: url }}/>
                 </View>
                 <View style={{ marginVertical: 10, alignSelf: 'center'}}>
                     <Button title="Change Profile Photo" onPress={pickImage} color ='#189AB4'/>
@@ -151,6 +217,7 @@ const EditProfile = ({route, navigation}) => {
                         onSubmit = { (values,actions) => {
                             // console.log(values)
                             console.log(values);
+                            updateInformation(values);
                         }}
                     >
                         {
@@ -178,7 +245,7 @@ const EditProfile = ({route, navigation}) => {
                                     {
                                         props.errors.firstname && props.touched.firstname &&
                                         <Text style={{ fontSize: 10, color: 'red'}}>
-                                            { props.errors.firstname}
+                                            {props.errors.firstname}
                                         </Text>
                                     }
                                     <TextInput mode='outlined' 
