@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, Touchable, TouchableWithoutFeedback, View, Keyboard, Image} from 'react-native';
+import { StyleSheet, Text, Touchable, TouchableWithoutFeedback, View, Keyboard, Image, ScrollView} from 'react-native';
 import LoginForm from '../forms/login_form';
 import CustomButton from '../styles/customButton';
 import { globalStyles } from '../styles/globalStyle';
@@ -38,7 +38,10 @@ const Login = ({ navigation, onLog })=>{
                     }} 
                     title='Sign Up' styleButton={styles.signButton} styleText={styles.signText}/>
 
-                    <CustomButton onPress={()=>{}} title={'Forgot Password?'} styleButton={undefined} styleText={{color: '#fff',textTransform:'capitalize'}} />
+                    <CustomButton onPress={()=>{
+                        navigation.navigate('ForgotPass')
+                    }} title={'Forgot Password?'} styleButton={undefined} styleText={{color: '#fff',textTransform:'capitalize'}} 
+                    />
                     
                 </View>
             </View>

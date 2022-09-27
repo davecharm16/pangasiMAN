@@ -57,4 +57,6 @@ export let api  = {
     updateAddressURL : "updateapi.php",
     //Update Password : Edit Profile
     updatePasswordURL : "updateapi.php",
+    //ForgotPassword
+    forgotPasswordURL  : "updateapi.php",
 }
