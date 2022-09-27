@@ -23,7 +23,7 @@ const Login = ({ navigation, onLog })=>{
                         {/* TODO: to be replaced by LOGO- Change Style to Image */}
                         PangasiMAN
                     </Text>
-                    <Text style = {styles.h_text}> The MAN for the Job</Text>
+                    <Text style = {styles.h_text}> The Right Man for the Job</Text>
                 </View>
                 <View style={styles.formContainer}>
                     {/* TODO : Forms Login  */}

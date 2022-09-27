@@ -1,6 +1,6 @@
 //home 192.168.100.54
-export let host = "http://192.168.100.54/";
-export let directory= "pangasimanAPI/rest/api/";
+export let host = "https://pangasiman.000webhostapp.com/";
+export let directory= "api/";
 
 
 
