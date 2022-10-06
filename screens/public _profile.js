@@ -26,6 +26,7 @@ const readSkillsURL = host + directory + api.readSkillsURL;
 const getReviewsURL = host + directory + api.getReviewsURL;
 const createReviewsURL = host + directory + api.createReviewsURL;
 const getJobOfferedURL = host + directory + api.getJobOfferedURL;
+const deleteReviewsURL = host + directory + api.deleteReviewsURL;
 
 
 
@@ -173,11 +174,32 @@ const PublicProfile = ({navigation, route})=>{
         })
     }
 
+    const deleteReviews = async(id) =>{
+        let body = {
+            "action" : "delete_reviews",
+            "id" : id
+        }
+
+        axios.post(deleteReviewsURL, body)
+        .then((response) =>{
+            if(response.data.message == "success"){
+                Alert.alert("Successfully Deleted your Review")
+                getReviews();
+            }
+            else{
+                Alert.alert("An Error Ocurred to the Server Try again Later")
+            }
+        })
+        .catch((error) => {
+            Alert.alert("NetWork Error: Error on Deleting Reviews");
+        })
+    }
+
 
     const funct = async (hasProfile) => {
         if(hasProfile.hasProfile != "0"){
             const storage = getStorage();
-            const imageName = '/'+hasProfile.firstname+hasProfile.userID + 'images.jpg';
+            const imageName = '/'+hasProfile.sex+hasProfile.userID + 'images.jpg';
             console.log(imageName);
             const reference = ref(storage, imageName);
             await getDownloadURL(reference).then((x) => {
@@ -242,7 +264,9 @@ const PublicProfile = ({navigation, route})=>{
                                     onChangeText = {(val) => {setReview(val)}}
                                     value= {review}
                                     multiline = {true}
-                                    placeholder='Review' placeholderTextColor='#189AB4'/>
+                                    placeholder='Review' placeholderTextColor='#189AB4'
+                                    maxLength={30}
+                                    />
                                     <View style = {globalStyles.row}>
                                         <Pressable
                                             style={[styles.button, styles.buttonClose]}
@@ -371,9 +395,21 @@ const PublicProfile = ({navigation, route})=>{
                                     reviews.map((item, index)=>{
                                         return(
                                             <View style = {[globalStyles.card, globalStyles.card_default]} key={index}>
-                                                <Text style={styles.textName}>
-                                                    {item.firstname} {item.lastname}
-                                                </Text>
+                                                <View style = {[globalStyles.row, {justifyContent : 'space-between'}]}>
+                                                    <Text style={styles.textName}>
+                                                        {item.firstname} {item.lastname}
+                                                    </Text>
+                                                    { (item.giverUserID == appUserID) && 
+                                                        <View>
+                                                            <TouchableOpacity onPress={()=>{
+                                                                deleteReviews(item.reviewID);
+                                                            }}>
+                                                                <MaterialIcons name="delete" size={24} color="#ed5e68" />
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                    }
+                                                </View>
+                                                
                                                 <View style = {globalStyles.row}>
                                                 {[...Array(parseInt(item.stars))].map((elementInArray, ind) => {
                                                     return(<FontAwesome name="star" size={14} color="#189AB4" key={ind}/>)
@@ -415,7 +451,7 @@ const PublicProfile = ({navigation, route})=>{
                                                 <View style = {globalStyles.row}>
                                                     <MaterialIcons name="attach-money" size={18} color="#5B5B5B" />
                                                     <Text>
-                                                        {item.jobPay} Php
+                                                        {item.jobPay} Php / Day
                                                     </Text>
                                                 </View>
                                                 <View style = {globalStyles.row}>

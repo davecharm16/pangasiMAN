@@ -1,6 +1,6 @@
 //home 192.168.100.54
-export let host = "http://192.168.100.54/";
-export let directory= "pangasimanAPI/rest/api/";
+export let host = "https://pangasiman.000webhostapp.com/";
+export let directory= "api/";
 
 
 
@@ -51,4 +51,14 @@ export let api  = {
     getJobOfferedURL : "readapi.php",
     //Delete Job Profile
     deleteJobURL : "deleteapi.php",
+    //Udate Information Edit Profile
+    updateInformationURL : "updateapi.php",
+    //Update Address Information : Edit Profile
+    updateAddressURL : "updateapi.php",
+    //Update Password : Edit Profile
+    updatePasswordURL : "updateapi.php",
+    //ForgotPassword
+    forgotPasswordURL  : "updateapi.php",
+    //Delete Reviews 
+    deleteReviewsURL : "deleteapi.php",
 }

@@ -50,6 +50,8 @@ const EditJob = ({navigation, route}) =>{
             "jobDescription" : values.jobDescription,
             "jobID" : jobData.jobID
         }
+        console.log("fuckedd up");
+        console.log(body);
 
         await axios.post(editJobURL, body)
         .then((response) =>{
@@ -60,6 +62,7 @@ const EditJob = ({navigation, route}) =>{
             }   
             else{
                 actions.resetForm();
+                console.log(response.data);
             }
         })
         .catch((error) => {

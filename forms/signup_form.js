@@ -67,6 +67,8 @@ const signInValidationSchema = yup.object().shape({
     security_ans : yup
     .string()
     .required('Security Question is Required')
+    .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed")
+    .min(2, ({ min }) => `at least ${min} characters`),
 })
 
 
@@ -178,6 +180,7 @@ const SignUpForm =({navigation})=>{
                                             onChangeText= {props.handleChange('first_name')}
                                             value = {props.values.first_name}
                                             onBlur = {props.handleBlur('first_name')}
+                                            maxLength = {25}
                                         />
                                         {
                                             props.errors.first_name && props.touched.first_name &&
@@ -194,6 +197,7 @@ const SignUpForm =({navigation})=>{
                                             onChangeText= {props.handleChange('last_name')}
                                             value = {props.values.last_name}
                                             onBlur = {props.handleBlur('last_name')}
+                                            maxLength = {25}
                                         />
                                         {
                                             props.errors.last_name && props.touched.last_name &&
@@ -241,6 +245,7 @@ const SignUpForm =({navigation})=>{
                                             keyboardType ='number-pad'
                                             value = {props.values.house_no}
                                             // onBlur = {props.handleBlur('house_no')}
+                                            maxLength = {6}
                                         />
                                     </View>
                                     <View style = {styles.formInputContainer}>
@@ -250,6 +255,7 @@ const SignUpForm =({navigation})=>{
                                             onChangeText= {props.handleChange('street')}
                                             value = {props.values.street}
                                             // onBlur = {props.handleBlur('street')}
+                                            maxLength = {20}
                                         />
                                     </View>
                                 </View>
@@ -262,6 +268,7 @@ const SignUpForm =({navigation})=>{
                                             onChangeText= {props.handleChange('baranggay')}
                                             value = {props.values.baranggay}
                                             onBlur = {props.handleBlur('baranggay')}
+                                            maxLength = {30}
                                         />
                                         {
                                             props.errors.baranggay && props.touched.baranggay &&
@@ -275,6 +282,7 @@ const SignUpForm =({navigation})=>{
                                             onChangeText= {props.handleChange('municipality')}
                                             value = {props.values.municipality}
                                             onBlur = {props.handleBlur('municipality')}
+                                            maxLength = {30}
                                         />
                                         {
                                             props.errors.municipality && props.touched.municipality &&
@@ -291,6 +299,7 @@ const SignUpForm =({navigation})=>{
                                             onChangeText= {props.handleChange('province')}
                                             value = {props.values.province}
                                             onBlur = {props.handleBlur('province')}
+                                            maxLength = {30}
                                         />
                                         {
                                             props.errors.province && props.touched.province &&
@@ -305,6 +314,7 @@ const SignUpForm =({navigation})=>{
                                             onChangeText= {props.handleChange('zipcode')}
                                             value = {props.values.zipcode}
                                             onBlur = {props.handleBlur('zipcode')}
+                                            maxLength = {6}
                                         />
                                         {
                                             props.errors.zipcode && props.touched.zipcode &&
@@ -324,6 +334,7 @@ const SignUpForm =({navigation})=>{
                                             onChangeText= {props.handleChange('email')}
                                             value = {props.values.email}
                                             onBlur = {props.handleBlur('email')}
+                                            maxLength = {30}
                                         />
                                         {props.errors.email && props.touched.email &&
                                             <Text style={{ fontSize: 10, color: 'red', paddingHorizontal:15 }}>{ props.errors.email}</Text>
@@ -384,6 +395,7 @@ const SignUpForm =({navigation})=>{
                                             onChangeText= {props.handleChange('security_ans')}
                                             value = {props.values.security_ans}
                                             onBlur = {props.handleBlur('security_ans')}
+                                            maxLength = {55}
                                         />
                                         {props.errors.security_ans && props.touched.security_ans &&
                                             <Text style={{ fontSize: 10, color: 'red', paddingHorizontal:15 }}>{ props.errors.security_ans}</Text>

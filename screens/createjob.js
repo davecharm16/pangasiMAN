@@ -105,6 +105,7 @@ const CreateJob = () =>{
                                     onChangeText= {props.handleChange('jobTitle')}
                                     value = {props.values.jobTitle}
                                     onBlur = {props.handleBlur('jobTitle')}
+                                    maxLength = {40}
                                 />
                             </View>
                             {
@@ -113,10 +114,11 @@ const CreateJob = () =>{
                             }
                             <View style={styles.row}>
                                 <MaterialIcons name="attach-money" size={24} color="#5B5B5B" />
-                                <TextInput placeholder="Pay 0.00" keyboardType="numeric" style = {[globalStyles.card, styles.inputCard]}
+                                <TextInput placeholder="Pay 0.00 / Day" keyboardType="numeric" style = {[globalStyles.card, styles.inputCard]}
                                     onChangeText= {props.handleChange('jobPay')}
                                     value = {props.values.jobPay}
                                     onBlur = {props.handleBlur('jobPay')}
+                                    maxLength = {6}
                                 />
                             </View>
                             {
@@ -129,6 +131,7 @@ const CreateJob = () =>{
                                     onChangeText= {props.handleChange('jobLocation')}
                                     value = {props.values.jobLocation}
                                     onBlur = {props.handleBlur('jobLocation')}
+                                    maxLength = {30}
                                 />
                             </View>
                             {
@@ -148,6 +151,7 @@ const CreateJob = () =>{
                                     onChangeText= {props.handleChange('jobDescription')}
                                     value = {props.values.jobDescription}
                                     onBlur = {props.handleBlur('jobDescription')}
+                                    maxLength = {150}
                                 />
                             </View>
                             {
@@ -174,7 +178,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor : '#fff',
         paddingHorizontal: 15,
-        paddingVertical: 10,
+        paddingVertical: 5,
     },
     card :{
         backgroundColor : '#f8f8f8',

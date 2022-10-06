@@ -11,6 +11,7 @@ import Profile from '../screens/profile';
 import { _setUser } from '../storage_async/async_function';
 import CreateJob from '../screens/createjob';
 import AppliedJobs from '../screens/view_applied';
+import { View } from 'react-native';
 
 // function Feed() {
 //   return (
@@ -30,18 +31,35 @@ import AppliedJobs from '../screens/view_applied';
 
 function CustomDrawerContent(props) {
   return (
-    <DrawerContentScrollView {...props}>
-      <DrawerItemList {...props} />
-      <DrawerItem
-        label="Logout"
-        onPress={() => {
-          // do log out
-          //unsetting the user
-          _setUser('{}');
-          props.onLog(false);
-        }}
-      />
+    <View style={{flex:1}}>
+    <DrawerContentScrollView {...props}
+      contentContainerStyle = {{flex: 1, justifyContent : 'space-between'}}
+    >
+      <View style = {{backgroundColor : '#fff'}}>
+        <DrawerItemList {...props} />
+        <DrawerItem
+          label="Logout"
+          onPress={() => {
+            // do log out
+            //unsetting the user
+            _setUser('{}');
+            props.onLog(false);
+          }}
+        />
+      </View>
+      <View>
+        <DrawerItem
+          label = "About the App"
+          onPress = {
+            ()=>{
+              console.log("I'm Pressed About");
+              props.navigation.navigate('About');
+            }
+          }
+        />
+      </View>
     </DrawerContentScrollView>
+    </View>
   );
 }
 

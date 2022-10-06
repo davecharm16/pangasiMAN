@@ -12,6 +12,8 @@ import PublicProfile from '../screens/public _profile';
 import EditProfile from '../screens/editprofile';
 import ViewJob from '../screens/viewjob';
 import EditJob from '../screens/edit_job';
+import ForgotPass from '../screens/forgotpass';
+import AboutApp from '../screens/aboutapp';
 
 const Stack = createNativeStackNavigator();
 
@@ -135,11 +137,30 @@ function Navigation() {
                 }
               } 
             } />
+            <Stack.Screen name="About" component={AboutApp} 
+            options={
+              { headerShown: true,
+                headerTintColor : '#fff', 
+                headerTitle: "About",
+                headerStyle: {
+                backgroundColor: '#05445E',
+                }
+              } 
+            } />
           </>
           ) : (
             <>
               <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}} />
               <Stack.Screen name="Signup" component={SignUpScreen} options={{headerShown: false}} />
+              <Stack.Screen name="ForgotPass" component={ForgotPass} options={
+              { headerShown: true,
+                headerTintColor : '#fff', 
+                headerTitle: "Forgot Password",
+                headerStyle: {
+                backgroundColor: '#05445E',
+                }
+              } 
+            } />
             </>
           )
         }

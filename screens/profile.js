@@ -179,7 +179,7 @@ const Profile = (props) => {
     const funct = async (hasProfile) => {
         if (hasProfile.hasProfile != "0") {
             const storage = getStorage();
-            const imageName = '/' + hasProfile.firstname + hasProfile.userID + 'images.jpg';
+            const imageName = '/' + hasProfile.sex + hasProfile.userID + 'images.jpg';
             console.log(imageName);
             const reference = ref(storage, imageName);
             await getDownloadURL(reference).then((x) => {
@@ -318,7 +318,9 @@ const Profile = (props) => {
                                     value = {skillCreate}
                                     onChangeText = {(val)=>{setSkillCreate(val)}}
                                     multiline = {true}
-                                    placeholder='Skill Name' placeholderTextColor='#189AB4'/>
+                                    placeholder='Skill Name' placeholderTextColor='#189AB4'
+                                    maxLength={15}
+                                    />
                                     <View style = {globalStyles.row}>
                                         <Pressable
                                             style={[styles.button, styles.buttonClose]}
@@ -423,6 +425,10 @@ const Profile = (props) => {
                     <View style={[globalStyles.card, globalStyles.card_default]}>
                         <View style={[globalStyles.row, {flexWrap:'wrap', justifyContent:'flex-start'}]}>
                             {
+                                (skills.length == 0) && 
+                                <Text style = {styles.textName}>Add your Skills Here</Text>
+                            }
+                            {
                                 skills.map((item, index) => {
                                     return (
                                         <View style={styles.skillContainer} key={index}>
@@ -507,7 +513,7 @@ const Profile = (props) => {
                                         <View style = {globalStyles.row}>
                                             <MaterialIcons name="attach-money" size={18} color="#5B5B5B" />
                                             <Text>
-                                                {item.jobPay} Php
+                                                {item.jobPay} Php / Day
                                             </Text>
                                         </View>
                                         <View style = {globalStyles.row}>

@@ -124,7 +124,7 @@ const AppliedJobs = ({navigation})=>{
                                     <View style={globalStyles.row}>
                                         <MaterialIcons name="attach-money" size={24} color="#5B5B5B" />
                                         <Text style={[styles.cardText, styles.grayText]}>
-                                            {item.jobPay} Php
+                                            {item.jobPay} Php / Day
                                         </Text>
                                     </View>
                                     <View style={globalStyles.row}>
