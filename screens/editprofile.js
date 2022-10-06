@@ -296,6 +296,7 @@ const EditProfile = ({route, navigation}) => {
                                         value = {props.values.firstname}
                                         onChangeText= {props.handleChange('firstname')}
                                         onBlur = {props.handleBlur('firstname')}
+                                        maxLength = {20}
                                     />
                                     {
                                         props.errors.firstname && props.touched.firstname &&
@@ -321,6 +322,7 @@ const EditProfile = ({route, navigation}) => {
                                         value = {props.values.lastname}
                                         onChangeText= {props.handleChange('lastname')}
                                         onBlur = {props.handleBlur('lastname')}
+                                        maxLength = {20}
                                     />
                                     {
                                         props.errors.lastname && props.touched.lastname &&
@@ -404,6 +406,7 @@ const EditProfile = ({route, navigation}) => {
                                                 onChangeText= {props.handleChange('houseNo')}
                                                 onBlur = {props.handleBlur('houseNo')}
                                                 keyboardType = 'numeric'
+                                                maxLength = {5}
                                             />
                                         </View>
                                         <View style = {styles.inputContainer}>
@@ -427,6 +430,7 @@ const EditProfile = ({route, navigation}) => {
                                                 onBlur = {props.handleBlur('street')}
                                                 multiline = {true}
                                                 numberOfLines = {2}
+                                                maxLength = {30}
                                             />
                                         </View>
                                     </View>
@@ -450,6 +454,7 @@ const EditProfile = ({route, navigation}) => {
                                                 value = {props.values.baranggay}
                                                 onChangeText= {props.handleChange('baranggay')}
                                                 onBlur = {props.handleBlur('baranggay')}
+                                                maxLength = {25}
                                             />
                                             {
                                                 props.errors.baranggay && props.touched.baranggay &&
@@ -477,6 +482,7 @@ const EditProfile = ({route, navigation}) => {
                                                 value = {props.values.municipality}
                                                 onChangeText= {props.handleChange('municipality')}
                                                 onBlur = {props.handleBlur('municipality')}
+                                                maxLength = {25}
                                             />
                                             {
                                                 props.errors.municipality && props.touched.municipality &&
@@ -506,6 +512,7 @@ const EditProfile = ({route, navigation}) => {
                                                 value = {props.values.province}
                                                 onChangeText= {props.handleChange('province')}
                                                 onBlur = {props.handleBlur('province')}
+                                                maxLength = {25}
                                             />
                                             {
                                                 props.errors.province && props.touched.province &&
@@ -534,6 +541,7 @@ const EditProfile = ({route, navigation}) => {
                                                 onChangeText= {props.handleChange('zipcode')}
                                                 onBlur = {props.handleBlur('zipcode')}
                                                 keyboardType = 'numeric'
+                                                maxLength = {5}
                                             />
                                             {
                                                 props.errors.zipcode && props.touched.zipcode &&

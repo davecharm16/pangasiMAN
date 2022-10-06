@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
     },
     cardText :{
         fontFamily : 'Mont-Bold',
+        paddingHorizontal: 5,
     },
     cardTextRegular :{
         fontFamily : 'Mont-Regular',

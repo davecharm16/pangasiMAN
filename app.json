@@ -2,13 +2,13 @@
     "expo": {
         "name": "PangasiMAN",
         "slug": "PangasiMAN",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",
         "splash": {
             "image": "./assets/splash.png",
-            "resizeMode": "contain",
+            "resizeMode": "cover",
             "backgroundColor": "#ffffff"
         },
         "updates": {
@@ -24,7 +24,11 @@
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#FFFFFF"
-            }
+            },
+            "permissions": [
+                "android.permission.RECORD_AUDIO"
+            ],
+            "package": "com.davecharm16.PangasiMAN"
         },
         "web": {
             "favicon": "./assets/favicon.png"
@@ -36,6 +40,11 @@
                     "photosPermission": "The app accesses your photos to let you share them with your friends."
                 }
             ]
-        ]
+        ],
+        "extra": {
+            "eas": {
+                "projectId": "080b7fc9-6d3a-4bf7-b5b1-a99df29381ee"
+            }
+        }
     }
 }

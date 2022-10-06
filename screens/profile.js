@@ -318,7 +318,9 @@ const Profile = (props) => {
                                     value = {skillCreate}
                                     onChangeText = {(val)=>{setSkillCreate(val)}}
                                     multiline = {true}
-                                    placeholder='Skill Name' placeholderTextColor='#189AB4'/>
+                                    placeholder='Skill Name' placeholderTextColor='#189AB4'
+                                    maxLength={15}
+                                    />
                                     <View style = {globalStyles.row}>
                                         <Pressable
                                             style={[styles.button, styles.buttonClose]}

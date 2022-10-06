@@ -105,6 +105,7 @@ const CreateJob = () =>{
                                     onChangeText= {props.handleChange('jobTitle')}
                                     value = {props.values.jobTitle}
                                     onBlur = {props.handleBlur('jobTitle')}
+                                    maxLength = {40}
                                 />
                             </View>
                             {
@@ -117,6 +118,7 @@ const CreateJob = () =>{
                                     onChangeText= {props.handleChange('jobPay')}
                                     value = {props.values.jobPay}
                                     onBlur = {props.handleBlur('jobPay')}
+                                    maxLength = {6}
                                 />
                             </View>
                             {
@@ -129,6 +131,7 @@ const CreateJob = () =>{
                                     onChangeText= {props.handleChange('jobLocation')}
                                     value = {props.values.jobLocation}
                                     onBlur = {props.handleBlur('jobLocation')}
+                                    maxLength = {30}
                                 />
                             </View>
                             {
@@ -148,6 +151,7 @@ const CreateJob = () =>{
                                     onChangeText= {props.handleChange('jobDescription')}
                                     value = {props.values.jobDescription}
                                     onBlur = {props.handleBlur('jobDescription')}
+                                    maxLength = {150}
                                 />
                             </View>
                             {
@@ -174,7 +178,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor : '#fff',
         paddingHorizontal: 15,
-        paddingVertical: 10,
+        paddingVertical: 5,
     },
     card :{
         backgroundColor : '#f8f8f8',
