@@ -56,7 +56,7 @@ const EditJob = ({navigation, route}) =>{
         await axios.post(editJobURL, body)
         .then((response) =>{
             if(response.data.message == "success"){
-                Alert.alert(response.data.message);
+                Alert.alert(response.data.message, "Job is Updated Successfully!");
                 let res = {...jobData, jobTitle: values.jobTitle, jobPay: values.jobPay, jobLocation:values.jobLocation, jobDescription:values.jobDescription};
                 callBack(res);
             }   

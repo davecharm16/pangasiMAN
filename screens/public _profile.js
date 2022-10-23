@@ -62,6 +62,8 @@ const PublicProfile = ({navigation, route})=>{
     const [modalVisible, setModalVisible] = useState(false);
     const [reviews, setReviews] = useState([]);
     const [jobOffered, setJobOffered] = useState([]);
+    const [reviewsAdd, setReviewsAdd] = useState(false);
+    const [reviewsCount, setReviewsCount] = useState(0);
 
 
 
@@ -164,6 +166,20 @@ const PublicProfile = ({navigation, route})=>{
         .then((response) =>{
             if(response.data.message == "success"){
                 setReviews(response.data.data)
+                let reviewCount = 0;
+                reviews.map((item, index) => {
+                    if(item.giverUserID == appUserID){
+                        reviewCount += 1;
+                        setReviewsCount(reviewCount);
+                    }
+                    if(reviewsCount > 0 ){
+                        setReviewsAdd(true);
+                    }
+                    else{
+                        setReviewsAdd(false);
+                    }
+                })
+                
             }
             else{
                 setReviews([]);
@@ -375,7 +391,7 @@ const PublicProfile = ({navigation, route})=>{
                         {/* hack */}
                         <View style = {{flexDirection :'row', justifyContent: 'space-between'}}>
                                 <Text style = {styles.text}>Service Reviews</Text>
-                                { (appUserID != userID) &&
+                                { (appUserID != userID) && (!reviewsAdd) &&
                                 <TouchableOpacity
                                     onPress={ ()=>{
                                         setModalVisible(true)
@@ -389,10 +405,12 @@ const PublicProfile = ({navigation, route})=>{
                         <View style={styles.reviewsContainer}>
                             {/* <ScrollView 
                             nestedScrollEnabled = {true}
-                            > */}
+                            > */
+                            }
                                 {
                                     (reviews.length > 0) ? 
                                     reviews.map((item, index)=>{
+                                        
                                         return(
                                             <View style = {[globalStyles.card, globalStyles.card_default]} key={index}>
                                                 <View style = {[globalStyles.row, {justifyContent : 'space-between'}]}>
